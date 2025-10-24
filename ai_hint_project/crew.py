@@ -37,7 +37,7 @@ class GroqWrapper:
         return False
 
 
-llm = GroqWrapper()
+llm_wrappper= GroqWrapper()
 
 print("LLM Initialized:", llm is not None)
 
@@ -122,7 +122,7 @@ def create_crew(persona: str, user_question: str):
         backstory=agent_cfg['backstory'],
         level=agent_cfg.get('level', 'beginner'),
         verbose=False,
-        llm=llm
+        llm=llm_wrapper.llm
     )
 
     reaction = persona_reactions.get(persona, "")
@@ -141,9 +141,6 @@ def create_crew(persona: str, user_question: str):
     )
 
     crew = Crew(agents=[agent], tasks=[task], verbose=True)
-    agent.llm = llm
-    
-    print("Agent LLM:", agent.llm)
     
 
     result = crew.kickoff()

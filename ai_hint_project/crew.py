@@ -9,11 +9,14 @@ import json
 from . import levels
 from crewai import LLM
 
-llm = LLM(
-    provider="openai",
-    model="gpt-4",
-    api_key=os.getenv("OPENAI_API_KEY")
+from langchain.chat_models import ChatOpenAI
+
+llm = ChatOpenAI(
+    model_name="gpt-4",
+    temperature=0.7,
+    openai_api_key=os.getenv("OPENAI_API_KEY")
 )
+
 
 print("✅ CrewAI version:", crewai.__version__)
 
@@ -102,10 +105,10 @@ def create_crew(persona: str, user_question: str):
     backstory=agent_cfg["backstory"],
     level=agent_cfg.get("level", "beginner"),
     verbose=False,
-    llm=llm
 )
 
-
+    agent.llm = llm
+    agent.__post_init__ = lambda: None  # ✅ Prevent fallback
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question
 

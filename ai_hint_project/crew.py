@@ -12,7 +12,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
 from ai_hint_project.tools.rag_tool import build_rag_tool
-print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
+#print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
 
 from crewai.llms.litellm import LiteLLM
 
@@ -55,6 +55,10 @@ persona_reactions = {
     "Zee": "Code incoming! Let’s treat this like a boss fight and break it down tactically.",
     "Sherlock Holmes": "Ah, a code snippet. Let’s deduce its structure and uncover any hidden flaws."
 }
+
+def check_key():
+    import os
+    print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
 
 # 🚀 Crew creation
 def create_crew(persona: str, user_question: str):

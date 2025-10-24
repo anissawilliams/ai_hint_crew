@@ -116,9 +116,10 @@ def create_crew(persona: str, user_question: str):
         backstory=agent_cfg['backstory'],
         level=agent_cfg.get('level', 'beginner'),
         verbose=False,
-        llm="placeholder"
+        llm="gpt-4"
     )
     agent.llm=llm_wrapper.llm
+    print("✅ Injected LLM type:", type(agent.llm))
 
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question

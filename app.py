@@ -7,9 +7,9 @@ import yaml
 import traceback
 
 # 📁 Setup paths
-#sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+os.path.join(base_dir, 'ai_hint_project/config/agents.yaml')
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "ai_hint_project", "src"))
+
 
 base_dir = os.path.dirname(__file__)
 from ai_hint_project.crew import create_crew
@@ -22,8 +22,11 @@ def get_cached_explanation(persona, question):
 
 #  Load YAML
 def load_yaml(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"YAML config not found at: {path}")
     with open(path, 'r') as f:
         return yaml.safe_load(f)
+
 @st.cache_data(show_spinner=False)
 def get_cached_explanation(persona, question):
     return create_crew(persona, question)

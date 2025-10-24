@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 import re
 from crewai import Crew, Agent, Task
@@ -10,7 +11,7 @@ import faiss
 import json
 from . import levels
 
-import os
+
 from langchain_groq import ChatGroq
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 print("🔑 GROQ_API_KEY:", os.getenv("GROQ_API_KEY"))
@@ -40,9 +41,10 @@ llm = GroqWrapper()
 
 print("LLM Initialized:", llm is not None)
 
-from ai_hint_project.tools.rag_tool import build_rag_tool
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, base_dir)
+
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 
 rag_tool = build_rag_tool(

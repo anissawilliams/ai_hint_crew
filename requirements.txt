@@ -10,4 +10,5 @@ numpy
 scikit-learn
 langchain-groq
 groq
+litellm
 

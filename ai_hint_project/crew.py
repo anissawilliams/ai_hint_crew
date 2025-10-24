@@ -21,8 +21,6 @@ llm = ChatGroq(
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
 
-
-
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 from ai_hint_project.tools.rag_tool import build_rag_tool
@@ -104,8 +102,8 @@ def create_crew(persona: str, user_question: str):
 
     agent.llm = llm  # ✅ Inject your ChatGroq instance
     agent.__post_init__ = lambda: None  # ✅ Disable CrewAI's fallback LLM logic
+    print("✅ Final agent LLM type:", type(agent.llm))
 
-    print("✅ Injected LLM type:", type(agent.llm))
 
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question

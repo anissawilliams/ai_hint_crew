@@ -37,7 +37,7 @@ class GroqWrapper:
         return False
 
 
-llm_wrappper= GroqWrapper()
+llm_wrapper= GroqWrapper()
 
 
 

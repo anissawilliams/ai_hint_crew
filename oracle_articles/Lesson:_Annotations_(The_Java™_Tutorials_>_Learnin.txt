@@ -1,0 +1,62 @@
+Lesson: Annotations (The Java™ Tutorials > Learning the Java Language)
+A browser with JavaScript enabled is required for this page to operate properly.
+Documentation
+The Java™ Tutorials
+Hide TOC
+Annotations
+Annotations Basics
+Declaring an Annotation Type
+Predefined Annotation Types
+Type Annotations and Pluggable Type Systems
+Repeating Annotations
+Questions and Exercises
+Trail:
+Learning the Java Language
+Home Page
+>
+Learning the Java Language
+« Previous
+•
+Trail
+•
+Next »
+The Java Tutorials have been written for JDK 8. Examples and practices described in this page don't take advantage of improvements introduced in later releases and might use technology no longer available.
+See
+Dev.java
+for updated tutorials taking advantage of the latest releases.
+See
+Java Language Changes
+for a summary of updated language features in Java SE 9 and subsequent releases.
+See
+JDK Release Notes
+for information about new features, enhancements, and removed or deprecated options for all JDK releases.
+Lesson: Annotations
+Annotations
+, a form of metadata, provide data about a program that is not part of the program itself. Annotations have no direct effect on the operation of the code they annotate.
+Annotations have a number of uses, among them:
+Information for the compiler
+— Annotations can be used by the compiler to detect errors or suppress warnings.
+Compile-time and deployment-time processing
+— Software tools can process annotation information to generate code, XML files, and so forth.
+Runtime processing
+— Some annotations are available to be examined at runtime.
+This lesson explains where annotations can be used, how to apply annotations, what predefined annotation types are available in the Java Platform, Standard Edition (Java SE API), how type annotations can be used in conjunction with pluggable type systems to write code with stronger type checking, and how to implement repeating annotations.
+« Previous
+•
+Trail
+•
+Next »
+About Oracle
+|
+Contact Us
+|
+Legal Notices
+|
+Terms of Use
+|
+Your Privacy Rights
+Copyright © 1995, 2024 Oracle and/or its affiliates. All rights reserved.
+Previous page:
+Previous Lesson
+Next page:
+Annotations Basics

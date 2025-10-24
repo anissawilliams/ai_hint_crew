@@ -1,0 +1,7 @@
+Since its introduction in Java 8, the Stream API has become a staple of Java development. The basic operations like iterating, filtering, mapping sequences of elements are deceptively simple to use.
+
+But these can also be overused and fall into some common pitfalls.
+
+To get a better understanding on how Streams work and how to combine them with other language features, check out our guide to Java Streams:
+
+>> Join Pro and download the eBook

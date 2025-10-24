@@ -1,0 +1,162 @@
+Bounded Type Parameters (The Java™ Tutorials >        
+            Learning the Java Language > Generics (Updated))
+A browser with JavaScript enabled is required for this page to operate properly.
+Documentation
+The Java™ Tutorials
+Hide TOC
+Generics (Updated)
+Why Use Generics?
+Generic Types
+Raw Types
+Generic Methods
+Bounded Type Parameters
+Generic Methods and Bounded Type Parameters
+Generics, Inheritance, and Subtypes
+Type Inference
+Wildcards
+Upper Bounded Wildcards
+Unbounded Wildcards
+Lower Bounded Wildcards
+Wildcards and Subtyping
+Wildcard Capture and Helper Methods
+Guidelines for Wildcard Use
+Type Erasure
+Erasure of Generic Types
+Erasure of Generic Methods
+Effects of Type Erasure and Bridge Methods
+Non-Reifiable Types
+Restrictions on Generics
+Questions and Exercises
+Trail:
+Learning the Java Language
+Lesson:
+Generics (Updated)
+Home Page
+>
+Learning the Java Language
+>
+Generics (Updated)
+« Previous
+•
+Trail
+•
+Next »
+The Java Tutorials have been written for JDK 8. Examples and practices described in this page don't take advantage of improvements introduced in later releases and might use technology no longer available.
+See
+Dev.java
+for updated tutorials taking advantage of the latest releases.
+See
+Java Language Changes
+for a summary of updated language features in Java SE 9 and subsequent releases.
+See
+JDK Release Notes
+for information about new features, enhancements, and removed or deprecated options for all JDK releases.
+Bounded Type Parameters
+There may be times when you want to restrict the types that can be used as type arguments in a parameterized type. For example, a method that operates on numbers might only want to accept instances of
+Number
+or its subclasses. This is what
+bounded type parameters
+are for.
+To declare a bounded type parameter, list the type parameter's name, followed by the
+extends
+keyword, followed by its
+upper bound
+, which in this example is
+Number
+. Note that, in this context,
+extends
+is used in a general sense to mean either "extends" (as in classes) or "implements" (as in interfaces).
+public class Box<T> {
+
+    private T t;          
+
+    public void set(T t) {
+        this.t = t;
+    }
+
+    public T get() {
+        return t;
+    }
+
+    public <U
+extends Number
+> void inspect(U u){
+        System.out.println("T: " + t.getClass().getName());
+        System.out.println("U: " + u.getClass().getName());
+    }
+
+    public static void main(String[] args) {
+        Box<Integer> integerBox = new Box<Integer>();
+        integerBox.set(new Integer(10));
+        integerBox.inspect("some text"); //
+error: this is still String!
+}
+}
+By modifying our generic method to include this bounded type parameter, compilation will now fail, since our invocation of
+inspect
+still includes a
+String
+:
+Box.java:21: <U>inspect(U) in Box<java.lang.Integer> cannot
+  be applied to (java.lang.String)
+                        integerBox.inspect("10");
+                                  ^
+1 error
+In addition to limiting the types you can use to instantiate a generic type, bounded type parameters allow you to invoke methods defined in the bounds:
+public class NaturalNumber<T extends Integer> {
+
+    private T n;
+
+    public NaturalNumber(T n)  { this.n = n; }
+
+    public boolean isEven() {
+        return
+n.intValue()
+% 2 == 0;
+    }
+
+    // ...
+}
+The
+isEven
+method invokes the
+intValue
+method defined in the
+Integer
+class through
+n
+.
+Multiple Bounds
+The preceding example illustrates the use of a type parameter with a single bound, but a type parameter can have
+multiple bounds
+:
+<T extends B1 & B2 & B3>
+A type variable with multiple bounds is a subtype of all the types listed in the bound. If one of the bounds is a class, it must be specified first.  For example:
+Class A { /* ... */ }
+interface B { /* ... */ }
+interface C { /* ... */ }
+
+class D <T extends A & B & C> { /* ... */ }
+If bound
+A
+is not specified first, you get a compile-time error:
+class D <T extends B & A & C> { /* ... */ }  // compile-time error
+« Previous
+•
+Trail
+•
+Next »
+About Oracle
+|
+Contact Us
+|
+Legal Notices
+|
+Terms of Use
+|
+Your Privacy Rights
+Copyright © 1995, 2024 Oracle and/or its affiliates. All rights reserved.
+Previous page:
+Generic Methods
+Next page:
+Generic Methods and Bounded Type Parameters

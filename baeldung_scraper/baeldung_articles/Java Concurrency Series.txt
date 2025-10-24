@@ -1,0 +1,5 @@
+Handling concurrency in an application can be a tricky process with many potential pitfalls. A solid grasp of the fundamentals will go a long way to help minimize these issues.
+
+Get started with understanding multi-threaded applications with our Java Concurrency guide:
+
+>> Download the eBook

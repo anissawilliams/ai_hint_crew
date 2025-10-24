@@ -1,0 +1,1 @@
+If you are new to Java, this series will go over the basic syntax of the language, introduce classes and objects and a few simple examples of using common Java structures.

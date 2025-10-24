@@ -1,0 +1,18 @@
+{
+  "wizard": {
+    "level": 1,
+    "tasks_completed": 3
+  },
+  "detective": {
+    "level": 2,
+    "tasks_completed": 7
+  },
+  "Nova": {
+    "level": 1,
+    "tasks_completed": 3
+  },
+  "Yoda": {
+    "level": 1,
+    "tasks_completed": 1
+  }
+}

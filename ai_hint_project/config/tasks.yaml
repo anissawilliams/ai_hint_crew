@@ -1,0 +1,5 @@
+tasks:
+  explainer:
+    name: "Explain Concept"
+    description: "Explain this topic in your unique style: {query}"
+    expected_output: "A clear, engaging explanation using your persona's metaphors for beginners."

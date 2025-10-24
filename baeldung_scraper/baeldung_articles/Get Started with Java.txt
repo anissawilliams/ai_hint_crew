@@ -1,0 +1,3 @@
+Java is one of the most popular programming languages, often used for building web and enterprise scale applications. This collection of tutorials will help you get started with the basic concepts in Java.
+
+If you are already familiar with the fundamentals, check out the larger Java guide here: Java Tutorial which goes into more detail with each aspect of the language.

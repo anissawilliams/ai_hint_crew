@@ -1,0 +1,79 @@
+Lesson: Interfaces and Inheritance (The Java™ Tutorials > Learning the Java Language)
+A browser with JavaScript enabled is required for this page to operate properly.
+Documentation
+The Java™ Tutorials
+Hide TOC
+Interfaces and Inheritance
+Interfaces
+Defining an Interface
+Implementing an Interface
+Using an Interface as a Type
+Evolving Interfaces
+Default Methods
+Summary of Interfaces
+Questions and Exercises
+Inheritance
+Multiple Inheritance of State, Implementation, and Type
+Overriding and Hiding Methods
+Polymorphism
+Hiding Fields
+Using the Keyword super
+Object as a Superclass
+Writing Final Classes and Methods
+Abstract Methods and Classes
+Summary of Inheritance
+Questions and Exercises
+Trail:
+Learning the Java Language
+Home Page
+>
+Learning the Java Language
+« Previous
+•
+Trail
+•
+Next »
+The Java Tutorials have been written for JDK 8. Examples and practices described in this page don't take advantage of improvements introduced in later releases and might use technology no longer available.
+See
+Dev.java
+for updated tutorials taking advantage of the latest releases.
+See
+Java Language Changes
+for a summary of updated language features in Java SE 9 and subsequent releases.
+See
+JDK Release Notes
+for information about new features, enhancements, and removed or deprecated options for all JDK releases.
+Lesson: Interfaces and Inheritance
+Interfaces
+You saw an example of implementing an interface in the previous 
+lesson. 
+You can read more about interfaces here—what they are for, why you might want to write one, and how to write one.
+Inheritance
+This section describes the way in which you can derive one class from another. That is, how a
+subclass
+can inherit fields and methods from a
+superclass
+. You will learn that all classes are derived from the
+Object
+class, and how to modify the methods that a subclass inherits from superclasses. This section also covers interface-like
+abstract classes
+.
+« Previous
+•
+Trail
+•
+Next »
+About Oracle
+|
+Contact Us
+|
+Legal Notices
+|
+Terms of Use
+|
+Your Privacy Rights
+Copyright © 1995, 2024 Oracle and/or its affiliates. All rights reserved.
+Previous page:
+Previous Lesson
+Next page:
+Interfaces

@@ -38,14 +38,9 @@ class GroqWrapper:
 
 llm = GroqWrapper()
 
-
-
-
 print("LLM Initialized:", llm is not None)
 
-
-
-from ai_hint_project.tools.rag_tool import build_rag_tool
+from tools.rag_tool import build_rag_tool
 
 
 base_dir = os.path.dirname(os.path.abspath(__file__))

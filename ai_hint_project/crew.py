@@ -39,9 +39,6 @@ class GroqWrapper:
 
 llm_wrapper= GroqWrapper()
 
-
-
-
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 from ai_hint_project.tools.rag_tool import build_rag_tool
@@ -70,9 +67,6 @@ def load_rag_store(folder="baeldung_scraper"):
     with open(chunks_path, "r", encoding="utf-8") as f:
         chunks = json.load(f)
     return index, chunks
-
-
-
 
 # Load YAML config
 def load_yaml(path):
@@ -122,8 +116,9 @@ def create_crew(persona: str, user_question: str):
         backstory=agent_cfg['backstory'],
         level=agent_cfg.get('level', 'beginner'),
         verbose=False,
-        llm=llm_wrapper.llm
+        llm="placeholder"
     )
+    agent.llm=llm_wrapper.llm
 
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question

@@ -9,6 +9,13 @@ def load_rag_store(folder="baeldung_scraper"):
         chunks = json.load(f)
     return index, chunks
 
+def build_rag_tool(index_path, chunks_path):
+    index = faiss.read_index(index_path)
+    with open(chunks_path, "r", encoding="utf-8") as f:
+        chunks = json.load(f)
+    return index, chunks
+
+
 def search(query, model, index, chunks, top_k=5):
     query_embedding = model.encode([query])
     distances, indices = index.search(np.array(query_embedding), top_k)

@@ -12,6 +12,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
 from ai_hint_project.tools.rag_tool import build_rag_tool
+print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
 
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool = build_rag_tool(

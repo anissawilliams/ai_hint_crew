@@ -7,19 +7,20 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import json
 from . import levels
-from langchain_groq import ChatGroq
+from crewai import LLM
+
+llm = LLM(
+    provider="groq",
+    model="llama3-8b-8192",  # or your preferred Groq model
+    api_key=os.getenv("GROQ_API_KEY")
+)
+
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 print("🔑 GROQ_API_KEY:", os.getenv("GROQ_API_KEY"))
 
 print("API Key Loaded:", "Yes" if GROQ_API_KEY else "No")
 
-# Step 1: Create your Groq LLM
-llm = ChatGroq(
-    model_name="llama-3.1-8b-instant",
-    temperature=0.7,
-    groq_api_key=os.getenv("GROQ_API_KEY")
-)
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
@@ -97,12 +98,9 @@ def create_crew(persona: str, user_question: str):
     goal=agent_cfg["goal"],
     backstory=agent_cfg["backstory"],
     level=agent_cfg.get("level", "beginner"),
-    verbose=False
+    verbose=False,
+    llm=llm
 )
-
-    agent.llm = llm  # ✅ Inject your ChatGroq instance
-    agent.__post_init__ = lambda: None  # ✅ Disable CrewAI's fallback LLM logic
-    print("✅ Final agent LLM type:", type(agent.llm))
 
 
     reaction = persona_reactions.get(persona, "")
@@ -122,6 +120,8 @@ def create_crew(persona: str, user_question: str):
 
     crew = Crew(agents=[agent], tasks=[task], verbose=True)
     
+
+    print("✅ Final agent LLM type:", type(agent.llm))
 
     result = crew.kickoff()
     levels.update_level(persona)

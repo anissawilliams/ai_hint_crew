@@ -3,41 +3,36 @@ import sys
 import yaml
 import re
 from crewai import Crew, Agent, Task
-from langchain_community.chat_models import ChatOllama
-
-
 from sentence_transformers import SentenceTransformer
 import faiss
 import json
 from . import levels
-
-
 from langchain_groq import ChatGroq
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 print("🔑 GROQ_API_KEY:", os.getenv("GROQ_API_KEY"))
 
 print("API Key Loaded:", "Yes" if GROQ_API_KEY else "No")
-from langchain_groq import ChatGroq
 
-class GroqWrapper:
-    def __init__(self, model_name="llama-3.1-8b-instant", temperature=0.7):
-        self.llm = ChatGroq(
-            model_name=model_name,
-            temperature=temperature,
-            groq_api_key=os.getenv("GROQ_API_KEY")
-        )
+# Step 1: Create your Groq LLM
+llm = ChatGroq(
+    model_name="llama-3.1-8b-instant",
+    temperature=0.7,
+    groq_api_key=os.getenv("GROQ_API_KEY")
+)
 
-    def call(self, messages, **kwargs):
-        response = self.llm.invoke(messages)
-        # CrewAI expects a string, not an AIMessage object
-        return response.content if hasattr(response, "content") else str(response)
+# Step 2: Create the agent WITHOUT llm
+agent = Agent(
+    role=agent_cfg["role"],
+    goal=agent_cfg["goal"],
+    backstory=agent_cfg["backstory"],
+    level=agent_cfg.get("level", "beginner"),
+    verbose=False
+)
 
+# Step 3: Inject the LLM AFTER initialization
+agent.llm = llm
 
-    def supports_stop_words(self):
-        return False
-
-
-llm_wrapper= GroqWrapper()
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)

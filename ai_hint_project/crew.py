@@ -44,6 +44,7 @@ print("LLM Initialized:", llm is not None)
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
+from ai_hint_project.tools.rag_tool import build_rag_tool
 
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 

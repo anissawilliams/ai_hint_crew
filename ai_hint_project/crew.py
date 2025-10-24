@@ -21,6 +21,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 print("🔑 GROQ_API_KEY:", os.getenv("GROQ_API_KEY"))
 
 print("API Key Loaded:", "Yes" if GROQ_API_KEY else "No")
+print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
 
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

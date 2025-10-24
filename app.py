@@ -1,25 +1,11 @@
 import streamlit as st
 import sys
 import os
-
-
 import yaml
 import traceback
 
 # 📁 Setup paths
 base_dir = os.path.dirname(__file__)
-os.path.join(base_dir, 'ai_hint_project/config/agents.yaml')
-
-
-
-
-from ai_hint_project.crew import create_crew
-
-@st.cache_data(show_spinner=False)
-def get_cached_explanation(persona, question):
-    return create_crew(persona, question)
-
-
 
 #  Load YAML
 def load_yaml(path):
@@ -28,12 +14,13 @@ def load_yaml(path):
     with open(path, 'r') as f:
         return yaml.safe_load(f)
 
+from ai_hint_project.crew import create_crew
+
 @st.cache_data(show_spinner=False)
 def get_cached_explanation(persona, question):
     return create_crew(persona, question)
 
-
-agents_config = load_yaml(os.path.join(base_dir, 'ai_hint_project/src/ai_hint_project/config/agents.yaml'))
+agents_config = load_yaml(os.path.join(base_dir, 'ai_hint_project/config/agents.yaml'))
 
 # 🎮 Initialize Level
 if "level" not in st.session_state:

@@ -40,8 +40,7 @@ llm = GroqWrapper()
 
 print("LLM Initialized:", llm is not None)
 
-from tools.rag_tool import build_rag_tool
-
+from ai_hint_project.tools.rag_tool import build_rag_tool
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

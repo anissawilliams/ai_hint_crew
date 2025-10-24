@@ -94,7 +94,6 @@ def create_crew(persona: str, user_question: str):
     if not agent_cfg:
         raise ValueError(f"Unknown persona: {persona}")
 
-    # Step 2: Create the agent WITHOUT llm
     agent = Agent(
     role=agent_cfg["role"],
     goal=agent_cfg["goal"],
@@ -103,8 +102,8 @@ def create_crew(persona: str, user_question: str):
     verbose=False
 )
 
-    # Step 3: Inject the LLM AFTER initialization
-    agent.llm = llm
+    agent.llm = llm  # ✅ Inject your ChatGroq instance
+    agent.__post_init__ = lambda: None  # ✅ Disable CrewAI's fallback LLM logic
 
     print("✅ Injected LLM type:", type(agent.llm))
 

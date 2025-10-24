@@ -14,6 +14,14 @@ sys.path.insert(0, base_dir)
 from ai_hint_project.tools.rag_tool import build_rag_tool
 print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
 
+from crewai.llms.litellm import LiteLLM
+
+llm = LiteLLM(
+    model="gpt-4",
+    api_key=os.getenv("OPENAI_API_KEY"),
+    temperature=0.7
+)
+
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool = build_rag_tool(
     index_path=os.path.join(rag_folder, "baeldung_index.faiss"),
@@ -65,9 +73,10 @@ def create_crew(persona: str, user_question: str):
         goal=agent_cfg["goal"],
         backstory=agent_cfg["backstory"],
         level=agent_cfg.get("level", "beginner"),
-        verbose=False
-        # ✅ No llm passed — fallback to LiteLLM
+        verbose=False,
+        llm=llm
     )
+    print("✅ Agent LLM type:", type(agent.llm))
 
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question

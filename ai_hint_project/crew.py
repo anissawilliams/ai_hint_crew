@@ -10,10 +10,11 @@ from . import levels
 from crewai import LLM
 
 llm = LLM(
-    provider="groq",
-    model="llama3-8b-8192",  # or your preferred Groq model
-    api_key=os.getenv("GROQ_API_KEY")
+    provider="openai",
+    model="gpt-4",
+    api_key=os.getenv("OPENAI_API_KEY")
 )
+
 
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

@@ -15,6 +15,7 @@ llm = LLM(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
+print("✅ CrewAI version:", crewai.__version__)
 
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

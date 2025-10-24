@@ -1,5 +1,5 @@
 streamlit
-crewai
+crewai==0.22.4
 crewai-tools
 pyyaml
 faiss-cpu

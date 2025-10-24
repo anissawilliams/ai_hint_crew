@@ -21,17 +21,6 @@ llm = ChatGroq(
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
 
-# Step 2: Create the agent WITHOUT llm
-agent = Agent(
-    role=agent_cfg["role"],
-    goal=agent_cfg["goal"],
-    backstory=agent_cfg["backstory"],
-    level=agent_cfg.get("level", "beginner"),
-    verbose=False
-)
-
-# Step 3: Inject the LLM AFTER initialization
-agent.llm = llm
 
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -105,15 +94,18 @@ def create_crew(persona: str, user_question: str):
     if not agent_cfg:
         raise ValueError(f"Unknown persona: {persona}")
 
+    # Step 2: Create the agent WITHOUT llm
     agent = Agent(
-        role=agent_cfg['role'],
-        goal=agent_cfg['goal'],
-        backstory=agent_cfg['backstory'],
-        level=agent_cfg.get('level', 'beginner'),
-        verbose=False,
-        llm="gpt-4"
-    )
-    agent.llm=llm_wrapper.llm
+    role=agent_cfg["role"],
+    goal=agent_cfg["goal"],
+    backstory=agent_cfg["backstory"],
+    level=agent_cfg.get("level", "beginner"),
+    verbose=False
+)
+
+    # Step 3: Inject the LLM AFTER initialization
+    agent.llm = llm
+
     print("✅ Injected LLM type:", type(agent.llm))
 
     reaction = persona_reactions.get(persona, "")

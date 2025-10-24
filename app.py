@@ -7,11 +7,12 @@ import yaml
 import traceback
 
 # 📁 Setup paths
+base_dir = os.path.dirname(__file__)
 os.path.join(base_dir, 'ai_hint_project/config/agents.yaml')
 
 
 
-base_dir = os.path.dirname(__file__)
+
 from ai_hint_project.crew import create_crew
 
 @st.cache_data(show_spinner=False)

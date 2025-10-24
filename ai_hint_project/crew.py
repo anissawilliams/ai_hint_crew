@@ -39,7 +39,7 @@ class GroqWrapper:
 
 llm_wrappper= GroqWrapper()
 
-print("LLM Initialized:", llm is not None)
+
 
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

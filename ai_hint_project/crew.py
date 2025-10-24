@@ -2,71 +2,30 @@ import os
 import sys
 import yaml
 import re
-from crewai import Crew, Agent, Task
-from sentence_transformers import SentenceTransformer
-import faiss
 import json
+import faiss
+from crewai import Crew, Agent, Task
 from . import levels
-from crewai import LLM
 
-from langchain.chat_models import ChatOpenAI
-
-llm = ChatOpenAI(
-    model_name="gpt-4",
-    temperature=0.7,
-    openai_api_key=os.getenv("OPENAI_API_KEY")
-)
-
-
-print("✅ CrewAI version:", crewai.__version__)
-
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-print("🔑 GROQ_API_KEY:", os.getenv("GROQ_API_KEY"))
-
-print("API Key Loaded:", "Yes" if GROQ_API_KEY else "No")
-print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
-
-
+# 🔧 Base paths
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
+
 from ai_hint_project.tools.rag_tool import build_rag_tool
 
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
-
 rag_tool = build_rag_tool(
     index_path=os.path.join(rag_folder, "baeldung_index.faiss"),
     chunks_path=os.path.join(rag_folder, "chunks.json")
 )
 
-
-def load_rag_store(folder="baeldung_scraper"):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    rag_path = os.path.join(base_dir, folder)
-
-    index_path = os.path.join(rag_path, "baeldung_index.faiss")
-    chunks_path = os.path.join(rag_path, "chunks.json")
-
-    if not os.path.exists(index_path):
-        raise FileNotFoundError(f"FAISS index not found at: {index_path}")
-    if not os.path.exists(chunks_path):
-        raise FileNotFoundError(f"Chunks file not found at: {chunks_path}")
-
-    index = faiss.read_index(index_path)
-    with open(chunks_path, "r", encoding="utf-8") as f:
-        chunks = json.load(f)
-    return index, chunks
-
-# Load YAML config
+# 🔍 Load YAML config
 def load_yaml(path):
     with open(path, 'r') as f:
         return yaml.safe_load(f)
 
-# Detect if input contains code
-
-
+# 🧠 Detect if input contains code
 def is_code_input(text):
-    # Look for actual code patterns, not just symbols
     code_patterns = [
         r"\bdef\b", r"\bclass\b", r"\bimport\b", r"\breturn\b",
         r"\bif\b\s*\(?.*?\)?\s*:", r"\bfor\b\s*\(?.*?\)?\s*:", r"\bwhile\b\s*\(?.*?\)?\s*:",
@@ -74,7 +33,7 @@ def is_code_input(text):
     ]
     return any(re.search(pattern, text) for pattern in code_patterns)
 
-# Persona-specific reactions to pasted code
+# 🎭 Persona-specific reactions
 persona_reactions = {
     "Batman": "Code received. Looks like a breach in logic. Let’s patch the vulnerability before it spreads.",
     "Yoda": "Code, you have pasted. Analyze it, we must. Hidden, the bug may be.",
@@ -88,6 +47,7 @@ persona_reactions = {
     "Sherlock Holmes": "Ah, a code snippet. Let’s deduce its structure and uncover any hidden flaws."
 }
 
+# 🚀 Crew creation
 def create_crew(persona: str, user_question: str):
     print("✅ create_crew() called with persona:", persona)
 
@@ -100,21 +60,18 @@ def create_crew(persona: str, user_question: str):
         raise ValueError(f"Unknown persona: {persona}")
 
     agent = Agent(
-    role=agent_cfg["role"],
-    goal=agent_cfg["goal"],
-    backstory=agent_cfg["backstory"],
-    level=agent_cfg.get("level", "beginner"),
-    verbose=False,
-)
+        role=agent_cfg["role"],
+        goal=agent_cfg["goal"],
+        backstory=agent_cfg["backstory"],
+        level=agent_cfg.get("level", "beginner"),
+        verbose=False
+        # ✅ No llm passed — fallback to LiteLLM
+    )
 
-    agent.llm = llm
-    agent.__post_init__ = lambda: None  # ✅ Prevent fallback
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question
 
-    # 🔍 Use RAG tool to retrieve context
     context = rag_tool(user_question)
-
 
     task_template = tasks_config['tasks']['explainer']
     task = Task(
@@ -125,7 +82,6 @@ def create_crew(persona: str, user_question: str):
     )
 
     crew = Crew(agents=[agent], tasks=[task], verbose=True)
-    
 
     print("✅ Final agent LLM type:", type(agent.llm))
 

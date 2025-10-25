@@ -15,4 +15,5 @@ openai
 python-dotenv
 groq
 langchain-groq
+cohere
 

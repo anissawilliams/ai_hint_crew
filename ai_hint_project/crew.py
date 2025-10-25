@@ -7,9 +7,11 @@ import re
 import json
 import faiss
 from crewai import Crew, Agent, Task
-from langchain_openai import ChatOpenAI  # ✅ Use LangChain's OpenAI wrapper
 from . import levels
 from ai_hint_project.tools.rag_tool import build_rag_tool
+from openai import OpenAI
+from langchain_openai import ChatOpenAI
+
 
 # 🔧 Base paths
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -17,12 +19,18 @@ sys.path.insert(0, base_dir)
 
 # ✅ Initialize LangChain-compatible LLM
 
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key or not api_key.startswith("sk-"):
+    raise RuntimeError("OPENAI_API_KEY is missing or malformed.")
+
+client = OpenAI(api_key=api_key) 
 llm = ChatOpenAI(
     model="gpt-4",
     temperature=0.7,
-    api_key=os.getenv("OPENAI_API_KEY")  # ✅ Explicitly pass the key
+    client=client
 )
 
+print("🔑 OPENAI_API_KEY:", repr(api_key))
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool = build_rag_tool(

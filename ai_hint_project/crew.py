@@ -1,7 +1,7 @@
 # crew.py
 import os, sys, re, yaml, streamlit as st
 from crewai import Crew, Agent, Task
-#from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI
 #from langchain_groq import ChatGroq
 from ai_hint_project.tools.rag_tool import build_rag_tool
 from . import levels
@@ -17,7 +17,7 @@ sys.path.insert(0, base_dir)
 from langchain_community.llms.fake import FakeListLLM
 import streamlit as st
 
-from langchain.chat_models import ChatOpenAI
+#from langchain.chat_models import ChatOpenAI
 
 def get_llm():
     try:
@@ -25,7 +25,7 @@ def get_llm():
         llm = ChatOpenAI(
             api_key=st.secrets["OPENROUTER_API_KEY"],
             base_url="https://openrouter.ai/api/v1",
-            model_name="mistral/mistral-7b-instruct"
+            model="mistral/mistral-7b-instruct"
         )
         _ = llm.invoke("ping")  # test call
         print("✅ OpenRouter LLM loaded")

@@ -19,7 +19,8 @@ sys.path.insert(0, base_dir)
 
 llm = ChatOpenAI(
     model="gpt-4",
-    temperature=0.7
+    temperature=0.7,
+    api_key=os.getenv("OPENAI_API_KEY")  # ✅ Explicitly pass the key
 )
 
 # ✅ Build RAG tool

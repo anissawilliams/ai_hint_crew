@@ -13,14 +13,9 @@ sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
 
-from langchain_openai import ChatOpenAI
-from langchain_community.llms.fake import FakeListLLM
 
 from langchain_openai import ChatOpenAI
 from langchain_community.llms.fake import FakeListLLM
-import streamlit as st
-
-import streamlit as st
 from openrouter import ChatOpenAI
 
 class FakeListLLM:

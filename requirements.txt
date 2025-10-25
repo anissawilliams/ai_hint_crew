@@ -3,11 +3,12 @@ crewai
 pyyaml
 sentence-transformers
 langchain>=0.1.13
-langchain-community
-chromadb
+langchain-community>=0.0.21
+chromadb>=0.4.22
 faiss-cpu
 langchain-openai
 numpy
 scikit-learn
 openai
 python-dotenv
+

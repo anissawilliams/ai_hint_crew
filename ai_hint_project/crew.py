@@ -31,6 +31,14 @@ llm = ChatOpenAI(
     api_key=api_key
 )
 
+from langchain_groq import ChatGroq
+
+llm = ChatGroq(
+    groq_api_key=st.secrets["GROQ_API_KEY"],
+    model_name="llama3-70b-8192"  # or "llama3-70b-8192" or "mixtral-8x7b-32768"
+)
+
+
 print("🔑 OPENAI_API_KEY:", repr(api_key))
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

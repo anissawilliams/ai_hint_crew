@@ -8,6 +8,7 @@ from ai_hint_project.tools.rag_tool import build_rag_tool
 from langchain_openai import ChatOpenAI
 from langchain_community.llms.fake import FakeListLLM
 import cohere
+from . import levels
 
 print("✅ crew.py loaded")
 

@@ -20,17 +20,16 @@ def get_llm():
     try:
         print("🔌 Trying OpenRouter via ChatOpenAI...")
         llm = ChatOpenAI(
-            openai_api_key=st.secrets["OPENROUTER_API_KEY"],
-            openai_api_base="https://openrouter.ai/api/v1",
-            model_name="openrouter/mistral-7b"  # ✅ Valid model ID
+            api_key=st.secrets["OPENROUTER_API_KEY"],
+            base_url="https://openrouter.ai/api/v1",
+            model="openrouter/mistralai/mistral-7b-instruct"
         )
-        _ = llm.invoke("ping")  # test call
+        _ = llm.invoke("ping")
         print("✅ OpenRouter LLM loaded")
         return llm
     except Exception as e:
         print("⚠️ OpenRouter failed, falling back:", e)
         return FakeListLLM(responses=["This is a fallback response."])
-
 
 
 

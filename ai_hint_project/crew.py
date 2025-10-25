@@ -35,7 +35,7 @@ print("🔑 OPENAI_API_KEY:", repr(api_key))
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool, _ = build_rag_tool(
-    index_path=os.path.join(rag_folder, "baeldung_index.faiss"),
+    index_path = os.path.join(rag_folder, "baeldung_scraper"),
     chunks_path=os.path.join(rag_folder, "chunks.json")
 )
 

@@ -35,7 +35,7 @@ from langchain_groq import ChatGroq
 
 llm = ChatGroq(
     groq_api_key=st.secrets["GROQ_API_KEY"],
-   model_name="llama3-8b-8192"
+   model_name="llama-3.1-8b-instant"
 )
 print(f"🧠 LLM provider: {st.secrets.get('LLM_PROVIDER', 'openai')}")
 
@@ -45,7 +45,7 @@ def get_llm():
         from langchain_groq import ChatGroq
         return ChatGroq(
             groq_api_key=st.secrets["GROQ_API_KEY"],
-            model_name="llama3-8b-8192"
+            model_name="llama-3.1-8b-instant"
         )
     else:
         from langchain_openai import ChatOpenAI

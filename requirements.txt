@@ -1,11 +1,12 @@
 streamlit
 crewai
 pyyaml
-faiss-cpu
 sentence-transformers
 langchain>=0.1.13
-langchain-openai
 langchain-community
+sentence-transformers
+faiss-cpu
+langchain-openai
 numpy
 scikit-learn
 openai

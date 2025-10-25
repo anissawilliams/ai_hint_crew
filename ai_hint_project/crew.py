@@ -15,11 +15,16 @@ sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
 def get_llm():
-    llm = ChatGroq(
-        groq_api_key=st.secrets["GROQ_API_KEY"],
-        model_name="llama-3.1-8b-instant"
-    )
-    return llm
+    try:
+        print("🔌 Trying Groq LLM...")
+        return ChatGroq(
+            groq_api_key=st.secrets["GROQ_API_KEY"],
+            model_name="llama-3.1-8b-instant"
+        )
+    except Exception as e:
+        print("⚠️ Groq failed, falling back to dummy LLM:", e)
+        return FakeListLLM(responses=["This is a fallback response."])
+
 
 
 # ✅ Build RAG tool
@@ -70,6 +75,8 @@ def create_crew(persona: str, user_question: str):
         raise ValueError(f"Unknown persona: {persona}")
 
     llm = get_llm()
+    print("✅ LLM type:", type(llm))
+
     agent = Agent(
         role=agent_cfg["role"],
         goal=agent_cfg["goal"],

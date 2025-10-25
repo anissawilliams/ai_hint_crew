@@ -3,7 +3,7 @@ crewai
 pyyaml
 faiss-cpu
 sentence-transformers
-langchain
+langchain>=0.1.13
 langchain-openai
 langchain-community
 numpy

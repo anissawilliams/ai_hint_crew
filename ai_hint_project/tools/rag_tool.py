@@ -1,5 +1,4 @@
 
-from langchain.embeddings import HuggingFaceEmbeddings
 import json
 
 try:
@@ -7,6 +6,13 @@ try:
     print("✅ FAISS import successful")
 except Exception as e:
     print("❌ FAISS import failed:", e)
+
+try:
+    from langchain.embeddings import HuggingFaceEmbeddings
+    print("✅ HuggingFaceEmbeddings import successful")
+except Exception as e:
+    print("❌ HuggingFaceEmbeddings import failed:", e)
+
 
 def build_rag_tool(index_path, chunks_path):
     # Load embedding model

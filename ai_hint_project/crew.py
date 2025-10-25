@@ -20,20 +20,38 @@ from langchain_openai import ChatOpenAI
 from langchain_community.llms.fake import FakeListLLM
 import streamlit as st
 
+import streamlit as st
+from openrouter import ChatOpenAI
+
+class FakeListLLM:
+    def __init__(self, responses):
+        self.responses = responses
+
+    def invoke(self, prompt):
+        return self.responses[0]
+
 def get_llm():
     try:
         print("🔌 Trying OpenRouter via ChatOpenAI...")
         llm = ChatOpenAI(
-            api_key=st.secrets["OPENROUTER_API_KEY"],
-            base_url="https://openrouter.ai/api/v1",
-            model="openrouter/openai/gpt-3.5-turbo"
+            api_key=st.secrets["OPENROUTER_API_KEY"],  # Ensure this is correct
+            base_url="https://openrouter.ai/api/v1",  # OpenRouter API URL
+            model="gpt-3.5-turbo"  # Try with a simple model name for testing
         )
-        _ = llm.invoke("ping")
-        print("✅ OpenRouter LLM loaded")
+        # Testing if the model can respond to a simple ping or message
+        response = llm.invoke("Hello, OpenRouter!")
+        print("✅ OpenRouter LLM loaded with response:", response)
         return llm
     except Exception as e:
-        print("⚠️ OpenRouter failed, falling back:", e)
+        # More detailed error logging
+        print(f"⚠️ OpenRouter failed, falling back: {str(e)}")
         return FakeListLLM(responses=["This is a fallback response."])
+
+# Usage example
+llm = get_llm()
+response = llm.invoke("What is the capital of France?")
+print("Response:", response)
+
 
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

@@ -5,6 +5,7 @@ faiss-cpu
 sentence-transformers
 langchain
 langchain-openai
+langchain-community
 numpy
 scikit-learn
 openai

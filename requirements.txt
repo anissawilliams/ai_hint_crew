@@ -4,7 +4,7 @@ pyyaml
 sentence-transformers
 langchain>=0.1.13
 langchain-community
-sentence-transformers
+chromadb
 faiss-cpu
 langchain-openai
 numpy

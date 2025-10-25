@@ -19,7 +19,7 @@ def get_llm():
     from langchain_community.llms.fake import FakeListLLM
     return FakeListLLM(responses=["This is a fallback response."])
 
-print("✅ LLM object type:", type(llm))
+
 
 # def get_llm():
 #     provider = st.secrets.get("LLM_PROVIDER", "openai").lower()

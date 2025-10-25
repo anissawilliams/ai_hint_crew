@@ -35,11 +35,6 @@ def get_llm():
         print("⚠️ OpenRouter failed, falling back:", e)
         return FakeListLLM(responses=["This is a fallback response."])
 
-
-print("✅ LLM type:", type(llm), getattr(llm, "model", "unknown"))
-
-
-
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool, _ = build_rag_tool(

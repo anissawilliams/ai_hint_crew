@@ -2,8 +2,7 @@
 import os, sys, re, yaml, streamlit as st
 from crewai import Crew, Agent, Task
 #from langchain_openai import ChatOpenAI
-from langchain_community.llms.fake import FakeListLLM
-from langchain_groq import ChatGroq
+#from langchain_groq import ChatGroq
 from ai_hint_project.tools.rag_tool import build_rag_tool
 from . import levels
 
@@ -14,15 +13,22 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
+from langchain_openrouter import ChatOpenRouter
+from langchain_community.llms.fake import FakeListLLM
+import streamlit as st
+
 def get_llm():
     try:
-        print("🔌 Trying Groq LLM...")
-        return ChatGroq(
-            groq_api_key=st.secrets["GROQ_API_KEY"],
-            model_name="llama-3.1-8b-instant"
+        print("🔌 Trying OpenRouter LLM...")
+        llm = ChatOpenRouter(
+            openrouter_api_key=st.secrets["OPENROUTER_API_KEY"],
+            model="mistral/mistral-7b-instruct"
         )
+        _ = llm.invoke("ping")  # force test
+        print("✅ OpenRouter LLM loaded")
+        return llm
     except Exception as e:
-        print("⚠️ Groq failed, falling back to dummy LLM:", e)
+        print("⚠️ OpenRouter failed, falling back:", e)
         return FakeListLLM(responses=["This is a fallback response."])
 
 

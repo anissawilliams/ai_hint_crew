@@ -1,11 +1,24 @@
 import os
 import json
 import streamlit as st
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS, Chroma
 
+def get_embeddings():
+    use_openai = st.secrets.get("USE_OPENAI", "false").lower() == "true"
+
+    if use_openai:
+        try:
+            return OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"])
+        except Exception as e:
+            print(f"⚠️ OpenAI embeddings failed: {e}")
+            print("🔁 Falling back to HuggingFace embeddings")
+
+    return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
 def build_rag_tool(index_path, chunks_path):
-    embeddings = OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"])
+    embeddings = get_embeddings()
 
     vectorstore = None
     try:
@@ -21,7 +34,6 @@ def build_rag_tool(index_path, chunks_path):
                 folder_path=index_path,
                 embeddings=embeddings
             )
-
             print("✅ Fallback to FAISS index")
         except Exception as e2:
             print(f"❌ FAISS load failed: {e2}")

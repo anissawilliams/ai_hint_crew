@@ -12,11 +12,11 @@ def build_rag_tool(index_path, chunks_path):
 
     # Load Chroma vectorstore from disk
 
-    vectorstore = Chroma(
-        persist_directory=index_path,
-        embedding_function=embeddings,
-        client_settings=Settings(chroma_db_impl="duckdb+parquet", persist_directory=index_path)
-    )
+   vectorstore = Chroma.from_persistent_index(
+    embedding_function=embeddings,
+    persist_directory=index_path
+   )
+
 
     # Load original chunks (optional metadata)
     with open(chunks_path, "r") as f:

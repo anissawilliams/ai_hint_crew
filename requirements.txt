@@ -6,6 +6,7 @@ pysqlite3-binary
 langchain
 langchain-community
 langchain-openai
+langchain-huggingface
 chromadb>=0.4.22
 faiss-cpu
 numpy

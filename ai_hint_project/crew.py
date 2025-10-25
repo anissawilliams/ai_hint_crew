@@ -37,6 +37,22 @@ llm = ChatGroq(
     groq_api_key=st.secrets["GROQ_API_KEY"],
     model_name="llama3-70b-8192"  # or "llama3-70b-8192" or "mixtral-8x7b-32768"
 )
+print(f"🧠 LLM provider: {st.secrets.get('LLM_PROVIDER', 'openai')}")
+
+def get_llm():
+    provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
+    if provider == "groq":
+        from langchain_groq import ChatGroq
+        return ChatGroq(
+            groq_api_key=st.secrets["GROQ_API_KEY"],
+            model_name="mixtral-8x7b-32768"
+        )
+    else:
+        from langchain_openai import ChatOpenAI
+        return ChatOpenAI(
+            api_key=st.secrets["OPENAI_API_KEY"],
+            model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
+        )
 
 
 print("🔑 OPENAI_API_KEY:", repr(api_key))
@@ -86,7 +102,7 @@ def create_crew(persona: str, user_question: str):
     agent_cfg = agents_config['agents'].get(persona)
     if not agent_cfg:
         raise ValueError(f"Unknown persona: {persona}")
-
+    llm = get_llm()
     agent = Agent(
         role=agent_cfg["role"],
         goal=agent_cfg["goal"],

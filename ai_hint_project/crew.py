@@ -19,7 +19,7 @@ sys.path.insert(0, base_dir)
 
 # ✅ Initialize LangChain-compatible LLM
 
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = st.secrets["OPENAI_API_KEY"]
 if not api_key or not api_key.startswith("sk-"):
     raise RuntimeError("OPENAI_API_KEY is missing or malformed.")
 
@@ -27,7 +27,7 @@ client = OpenAI(api_key=api_key)
 llm = ChatOpenAI(
     model="gpt-4",
     temperature=0.7,
-    client=client
+    api_key=api_key
 )
 
 print("🔑 OPENAI_API_KEY:", repr(api_key))

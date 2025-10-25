@@ -23,20 +23,6 @@ def get_cached_persona_data():
 
 agents_config = get_cached_persona_data()
 
-# 🎮 Initialize Level
-if "level" not in st.session_state:
-    st.session_state.level = 1
-if "tasks_completed" not in st.session_state:
-    st.session_state.tasks_completed = 0
-
-level_titles = {
-    1: "Curious Coder",
-    2: "Debugging Rookie",
-    3: "Syntax Sleuth",
-    4: "Code Commander",
-    5: "Explainer Elite"
-}
-
 # 🧠 Validate agents
 if not agents_config or 'agents' not in agents_config:
     st.error("⚠️ Failed to load agents from YAML. Check your file path or format.")
@@ -93,9 +79,6 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# 🏆 Level Badge
-st.markdown(f"### 🏆 Level {st.session_state.level} — {level_titles[st.session_state.level]}")
-
 # 🧠 Persona Preview
 st.markdown(f"### {persona_avatars[selected_persona]} {selected_persona} is ready to explain!")
 st.markdown(f"**{persona_options[selected_persona]}**")
@@ -106,10 +89,16 @@ if any(x in user_question for x in ["def ", "class ", "{", "}", "()", "<", ">", 
     st.markdown("🧑‍💻 Code detected! Your explainer will respond accordingly.")
 
 # 🚀 Trigger Explanation
+if "explanation" not in st.session_state:
+    st.session_state.explanation = None  # Initialize the explanation session state if not already
+
 if st.button("Explain it!"):
     try:
         with st.spinner("🧠 Thinking..."):
             result = create_crew(selected_persona, user_question)
+
+        # Save the result in session_state to keep it persistent
+        st.session_state.explanation = result
 
         if result:
             st.markdown("### 🗣️ Explanation")
@@ -119,12 +108,15 @@ if st.button("Explain it!"):
             </div>
             """, unsafe_allow_html=True)
 
-            # 🎮 Level Up Logic
-            st.session_state.tasks_completed += 1
-            if st.session_state.tasks_completed % 5 == 0 and st.session_state.level < 5:
-                st.session_state.level += 1
-                st.success(f"🎉 You leveled up to Level {st.session_state.level} — {level_titles[st.session_state.level]}!")
-
     except Exception as e:
         st.error(f"Error: {e}")
         st.text(traceback.format_exc())
+
+# If there is a stored explanation, show it
+if st.session_state.explanation:
+    st.markdown("### 🗣️ Last Explanation")
+    st.markdown(f"""
+    <div style="background-color:#e6f7ff;padding:15px;border-radius:10px;">
+        {st.session_state.explanation}
+    </div>
+    """, unsafe_allow_html=True)

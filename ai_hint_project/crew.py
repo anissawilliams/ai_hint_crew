@@ -64,7 +64,7 @@ def create_crew(persona: str, user_question: str):
     base_dir = os.path.dirname(__file__)
     agents_config = load_yaml(os.path.join(base_dir, 'config/agents.yaml'))
     tasks_config = load_yaml(os.path.join(base_dir, 'config/tasks.yaml'))
-
+    print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
     agent_cfg = agents_config['agents'].get(persona)
     if not agent_cfg:
         raise ValueError(f"Unknown persona: {persona}")

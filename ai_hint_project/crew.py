@@ -23,29 +23,40 @@ class FakeListLLM:
     def invoke(self, prompt):
         return self.responses[0]
 
+import time
+import random
+
 def get_llm():
-    try:
-        # Try OpenRouter via ChatOpenAI
-        print("🔌 Trying OpenRouter via ChatOpenAI...")
-        llm = ChatOpenAI(
-            api_key=st.secrets["OPENROUTER_API_KEY"],  # Ensure this is correct
-            base_url="https://openrouter.ai/api/v1",  # OpenRouter API URL
-            model="gpt-3.5-turbo"  # Try with a simple model name for testing
-        )
-        # Testing if the model can respond to a simple ping or message
-        response = llm.invoke("Hello, OpenRouter!")
-        print("✅ OpenRouter LLM loaded with response:", response)
-        return llm
-    except Exception as e:
-        print(f"⚠️ OpenRouter failed, falling back: {str(e)}")
-        # Fallback to Cohere as a second option
+    retries = 5  # Set a limit for retries
+    backoff_factor = 2  # Exponential backoff factor
+    max_wait_time = 60  # Max wait time for retries in seconds
+
+    for attempt in range(retries):
         try:
-            print("🔌 Trying Cohere...")
-            co = cohere.Client(st.secrets["COHERE_API_KEY"])  # Replace with your Cohere API key
-            return co
+            print("🔌 Trying OpenRouter via ChatOpenAI...")
+            llm = ChatOpenAI(
+                api_key=st.secrets["OPENROUTER_API_KEY"],  # Ensure this is correct
+                base_url="https://openrouter.ai/api/v1",  # OpenRouter API URL
+                model="gpt-3.5-turbo"  # Try with a simple model name for testing
+            )
+            # Test if the model can respond to a simple ping or message
+            response = llm.invoke("Hello, OpenRouter!")
+            print("✅ OpenRouter LLM loaded with response:", response)
+            return llm
+        
         except Exception as e:
-            print(f"⚠️ Cohere failed, falling back to FakeListLLM: {str(e)}")
-            return FakeListLLM(responses=["This is a fallback response."])
+            if "429" in str(e):  # Check for rate limit error
+                wait_time = min(backoff_factor ** attempt, max_wait_time)
+                print(f"⚠️ Rate limit hit. Retrying in {wait_time}s...")
+                time.sleep(wait_time + random.uniform(0, 5))  # Adding randomness to avoid hitting limits simultaneously
+            else:
+                print(f"⚠️ Error encountered: {str(e)}")
+                break
+
+    # Fallback in case of failure after retries
+    print("⚠️ All retries failed, falling back to alternative LLM...")
+    return FakeListLLM(responses=["This is a fallback response."])
+
 
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

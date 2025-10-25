@@ -1,4 +1,6 @@
 # crew.py
+print("✅ crew.py loaded")
+
 import streamlit as st
 import os
 import sys

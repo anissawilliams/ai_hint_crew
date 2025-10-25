@@ -19,7 +19,7 @@ import requests
 import streamlit as st
 
 # Use your Hugging Face API key
-HF_API_KEY = st.secrets["HUGGINGFACE_API_KEY"]  # Ensure you add this secret in Streamlit secrets
+HF_API_KEY = st.secrets["HUGGINGFACE_ACCESS_TOKEN"]  # Ensure you add this secret in Streamlit secrets
 
 # Hugging Face model endpoint
 HF_API_URL = "https://api-inference.huggingface.co/models/gpt2"  # Replace with your chosen model (e.g., gpt2, gpt-j)

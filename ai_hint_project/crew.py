@@ -1,3 +1,5 @@
+# crew.py
+
 import os
 import sys
 import yaml
@@ -5,23 +7,21 @@ import re
 import json
 import faiss
 from crewai import Crew, Agent, Task
+from langchain.chat_models import ChatOpenAI  # ✅ Use LangChain's OpenAI wrapper
 from . import levels
+from ai_hint_project.tools.rag_tool import build_rag_tool
 
 # 🔧 Base paths
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
-from ai_hint_project.tools.rag_tool import build_rag_tool
-#print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
-
-from crewai.llms.litellm import LiteLLM
-
-llm = LiteLLM(
-    model="gpt-4",
-    api_key=os.getenv("OPENAI_API_KEY"),
+# ✅ Initialize LangChain-compatible LLM
+llm = ChatOpenAI(
+    model_name="gpt-4",  # or "gpt-3.5-turbo"
     temperature=0.7
 )
 
+# ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool = build_rag_tool(
     index_path=os.path.join(rag_folder, "baeldung_index.faiss"),
@@ -56,11 +56,7 @@ persona_reactions = {
     "Sherlock Holmes": "Ah, a code snippet. Let’s deduce its structure and uncover any hidden flaws."
 }
 
-def check_key():
-    import os
-    print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
-
-# 🚀 Crew creation
+# ✅ Crew creation
 def create_crew(persona: str, user_question: str):
     print("✅ create_crew() called with persona:", persona)
 
@@ -80,7 +76,6 @@ def create_crew(persona: str, user_question: str):
         verbose=False,
         llm=llm
     )
-    print("✅ Agent LLM type:", type(agent.llm))
 
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question
@@ -96,8 +91,6 @@ def create_crew(persona: str, user_question: str):
     )
 
     crew = Crew(agents=[agent], tasks=[task], verbose=True)
-
-    print("✅ Final agent LLM type:", type(agent.llm))
 
     result = crew.kickoff()
     levels.update_level(persona)

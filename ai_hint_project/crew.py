@@ -7,7 +7,6 @@ import sys
 import yaml
 import re
 import json
-import faiss
 from crewai import Crew, Agent, Task
 from . import levels
 from ai_hint_project.tools.rag_tool import build_rag_tool

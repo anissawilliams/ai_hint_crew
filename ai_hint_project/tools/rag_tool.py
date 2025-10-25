@@ -21,6 +21,7 @@ def build_rag_tool(index_path, chunks_path):
                 folder_path=index_path,
                 embeddings=embeddings
             )
+
             print("✅ Fallback to FAISS index")
         except Exception as e2:
             print(f"❌ FAISS load failed: {e2}")

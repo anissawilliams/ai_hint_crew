@@ -1,6 +1,7 @@
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from chromadb.config import Settings
 
 import json
 import streamlit as st
@@ -10,7 +11,12 @@ def build_rag_tool(index_path, chunks_path):
     embeddings = OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"])
 
     # Load Chroma vectorstore from disk
-    vectorstore = Chroma(persist_directory=index_path, embedding_function=embeddings)
+
+    vectorstore = Chroma(
+        persist_directory=index_path,
+        embedding_function=embeddings,
+        client_settings=Settings(chroma_db_impl="duckdb+parquet", persist_directory=index_path)
+    )
 
     # Load original chunks (optional metadata)
     with open(chunks_path, "r") as f:

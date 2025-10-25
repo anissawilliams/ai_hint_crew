@@ -4,11 +4,12 @@ crewai-tools
 pyyaml
 faiss-cpu
 sentence-transformers
-langchain
+langchain>=0.1.0
 langchain-community
 numpy
 scikit-learn
 langchain-groq
 groq
-litellm
+openai
+python-dotenv
 

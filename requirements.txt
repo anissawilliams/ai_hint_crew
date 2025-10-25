@@ -4,7 +4,7 @@ crewai-tools
 pyyaml
 faiss-cpu
 sentence-transformers
-langchain==0.1.13
+langchain
 langchain-community
 numpy
 scikit-learn

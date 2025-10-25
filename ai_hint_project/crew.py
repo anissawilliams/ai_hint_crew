@@ -26,7 +26,7 @@ if not api_key or not api_key.startswith("sk-"):
 
 client = OpenAI(api_key=api_key) 
 llm = ChatOpenAI(
-    model="gpt-4",
+    model="gpt-3.5-turbo",
     temperature=0.7,
     api_key=api_key
 )

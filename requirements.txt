@@ -2,10 +2,10 @@ streamlit
 crewai
 pyyaml
 sentence-transformers
-chromadb>=0.4.22
 pysqlite3-binary
 langchain>=0.1.13
 langchain-community>=0.0.21
+chromadb>=0.4.22
 langchain-openai
 numpy
 scikit-learn

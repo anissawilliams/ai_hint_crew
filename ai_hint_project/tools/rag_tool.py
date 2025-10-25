@@ -12,10 +12,10 @@ def build_rag_tool(index_path, chunks_path):
 
     # Load Chroma vectorstore from disk
 
-   vectorstore = Chroma.from_persistent_index(
+    vectorstore = Chroma.from_persistent_index(
     embedding_function=embeddings,
     persist_directory=index_path
-   )
+    )
 
 
     # Load original chunks (optional metadata)

@@ -1,25 +1,14 @@
-
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings  # or HuggingFaceEmbeddings if you prefer
 import json
-
-try:
-    from langchain.vectorstores import FAISS
-    print("✅ FAISS import successful")
-except Exception as e:
-    print("❌ FAISS import failed:", e)
-
-try:
-    from langchain.embeddings import HuggingFaceEmbeddings
-    print("✅ HuggingFaceEmbeddings import successful")
-except Exception as e:
-    print("❌ HuggingFaceEmbeddings import failed:", e)
-
+import streamlit as st
 
 def build_rag_tool(index_path, chunks_path):
-    # Load embedding model
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    # Use OpenAI embeddings for simplicity and Streamlit compatibility
+    embeddings = OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"])
 
-    # Load FAISS vectorstore
-    vectorstore = FAISS.load_local(index_path, embeddings)
+    # Load Chroma vectorstore from disk
+    vectorstore = Chroma(persist_directory=index_path, embedding_function=embeddings)
 
     # Load original chunks (optional metadata)
     with open(chunks_path, "r") as f:

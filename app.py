@@ -1,11 +1,14 @@
 import streamlit as st
+__import__('pysqlite3')
 import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import os
 import yaml
 import traceback
 
 # 📁 Setup paths
 base_dir = os.path.dirname(__file__)
+
 
 #  Load YAML
 def load_yaml(path):

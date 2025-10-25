@@ -1,14 +1,8 @@
 
-from langchain_openai import OpenAIEmbeddings  
+from langchain_openai import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
 import json
 import streamlit as st
-
-try:
-    from langchain.vectorstores import Chroma
-    print("✅ Chroma import successful")
-except Exception as e:
-    print("❌ Chroma import failed:", e)
-
 
 def build_rag_tool(index_path, chunks_path):
     # Use OpenAI embeddings for simplicity and Streamlit compatibility

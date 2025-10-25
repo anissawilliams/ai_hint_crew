@@ -26,7 +26,7 @@ def get_llm():
         llm = ChatOpenAI(
             api_key=st.secrets["OPENROUTER_API_KEY"],
             base_url="https://openrouter.ai/api/v1",
-            model="mistral-7b-instruct"  # ✅ Correct format
+            model="mistral-7b"  # ✅ Correct format
         )
         _ = llm.invoke("ping")
         print("✅ OpenRouter LLM loaded")

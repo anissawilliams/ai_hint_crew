@@ -12,6 +12,11 @@ from . import levels
 from ai_hint_project.tools.rag_tool import build_rag_tool
 from openai import OpenAI
 from langchain_openai import ChatOpenAI
+from langchain.llms.fake import FakeListLLM
+from langchain_groq import ChatGroq
+
+
+
 
 
 # 🔧 Base paths
@@ -25,34 +30,37 @@ if not api_key or not api_key.startswith("sk-"):
     raise RuntimeError("OPENAI_API_KEY is missing or malformed.")
 
 client = OpenAI(api_key=api_key) 
-llm = ChatOpenAI(
-    model="gpt-3.5-turbo",
-    temperature=0.7,
-    api_key=api_key
-)
 
-from langchain_groq import ChatGroq
+# llm = ChatOpenAI(
+#     model="gpt-3.5-turbo",
+#     temperature=0.7,
+#     api_key=api_key
+# )
 
-llm = ChatGroq(
-    groq_api_key=st.secrets["GROQ_API_KEY"],
-   model_name="llama-3.1-8b-instant"
-)
+# llm = ChatGroq(
+#     groq_api_key=st.secrets["GROQ_API_KEY"],
+#    model_name="llama-3.1-8b-instant"
+# )
+def get_llm():
+    print("🧪 Using dummy LLM for testing")
+    return FakeListLLM(responses=["This is a dummy response."])
+
 print(f"🧠 LLM provider: {st.secrets.get('LLM_PROVIDER', 'openai')}")
 
-def get_llm():
-    provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
-    if provider == "groq":
-        from langchain_groq import ChatGroq
-        return ChatGroq(
-            groq_api_key=st.secrets["GROQ_API_KEY"],
-            model_name="llama-3.1-8b-instant"
-        )
-    else:
-        from langchain_openai import ChatOpenAI
-        return ChatOpenAI(
-            api_key=st.secrets["OPENAI_API_KEY"],
-            model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
-        )
+# def get_llm():
+#     provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
+#     if provider == "groq":
+#         from langchain_groq import ChatGroq
+#         return ChatGroq(
+#             groq_api_key=st.secrets["GROQ_API_KEY"],
+#             model_name="llama-3.1-8b-instant"
+#         )
+#     else:
+#         from langchain_openai import ChatOpenAI
+#         return ChatOpenAI(
+#             api_key=st.secrets["OPENAI_API_KEY"],
+#             model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
+#         )
 
 
 print("🔑 OPENAI_API_KEY:", repr(api_key))

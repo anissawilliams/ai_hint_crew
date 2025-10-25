@@ -7,7 +7,6 @@ import traceback
 # 📁 Setup paths
 base_dir = os.path.dirname(__file__)
 
-
 #  Load YAML
 def load_yaml(path):
     if not os.path.exists(path):
@@ -17,15 +16,18 @@ def load_yaml(path):
 
 from ai_hint_project.crew import create_crew
 
+# Cache persona and configuration data to avoid unnecessary reloads
 @st.cache_data(show_spinner=False)
-def get_cached_explanation(persona, question):
-    return create_crew(persona, question)
+def get_cached_persona_data():
+    return load_yaml(os.path.join(base_dir, 'ai_hint_project/config/agents.yaml'))
 
-agents_config = load_yaml(os.path.join(base_dir, 'ai_hint_project/config/agents.yaml'))
+agents_config = get_cached_persona_data()
 
 # 🎮 Initialize Level
 if "level" not in st.session_state:
     st.session_state.level = 1
+if "tasks_completed" not in st.session_state:
+    st.session_state.tasks_completed = 0
 
 level_titles = {
     1: "Curious Coder",
@@ -56,7 +58,6 @@ for name, data in agents.items():
     if not isinstance(data, dict):
         st.warning(f"⚠️ Skipping malformed agent: {name}")
         continue
-    
 
     level = data.get('level', 'beginner')
     level_num = {
@@ -108,8 +109,7 @@ if any(x in user_question for x in ["def ", "class ", "{", "}", "()", "<", ">", 
 if st.button("Explain it!"):
     try:
         with st.spinner("🧠 Thinking..."):
-            result = get_cached_explanation(selected_persona, user_question)
-
+            result = create_crew(selected_persona, user_question)
 
         if result:
             st.markdown("### 🗣️ Explanation")
@@ -120,12 +120,11 @@ if st.button("Explain it!"):
             """, unsafe_allow_html=True)
 
             # 🎮 Level Up Logic
-            if st.session_state.level < 5:
+            st.session_state.tasks_completed += 1
+            if st.session_state.tasks_completed % 5 == 0 and st.session_state.level < 5:
                 st.session_state.level += 1
                 st.success(f"🎉 You leveled up to Level {st.session_state.level} — {level_titles[st.session_state.level]}!")
-
 
     except Exception as e:
         st.error(f"Error: {e}")
         st.text(traceback.format_exc())
-

@@ -1,9 +1,13 @@
-# crew.py
-import os, sys, re, yaml, streamlit as st
+import os
+import sys
+import re
+import yaml
+import streamlit as st
 from crewai import Crew, Agent, Task
-#from langchain_groq import ChatGroq
 from ai_hint_project.tools.rag_tool import build_rag_tool
-from . import levels
+from langchain_openai import ChatOpenAI
+from langchain_community.llms.fake import FakeListLLM
+import cohere
 
 print("✅ crew.py loaded")
 
@@ -12,12 +16,6 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
-
-
-from langchain_openai import ChatOpenAI
-from langchain_community.llms.fake import FakeListLLM
-from openrouter import ChatOpenAI
-
 class FakeListLLM:
     def __init__(self, responses):
         self.responses = responses
@@ -27,6 +25,7 @@ class FakeListLLM:
 
 def get_llm():
     try:
+        # Try OpenRouter via ChatOpenAI
         print("🔌 Trying OpenRouter via ChatOpenAI...")
         llm = ChatOpenAI(
             api_key=st.secrets["OPENROUTER_API_KEY"],  # Ensure this is correct
@@ -38,15 +37,15 @@ def get_llm():
         print("✅ OpenRouter LLM loaded with response:", response)
         return llm
     except Exception as e:
-        # More detailed error logging
         print(f"⚠️ OpenRouter failed, falling back: {str(e)}")
-        return FakeListLLM(responses=["This is a fallback response."])
-
-# Usage example
-llm = get_llm()
-response = llm.invoke("What is the capital of France?")
-print("Response:", response)
-
+        # Fallback to Cohere as a second option
+        try:
+            print("🔌 Trying Cohere...")
+            co = cohere.Client(st.secrets["COHERE_API_KEY"])  # Replace with your Cohere API key
+            return co
+        except Exception as e:
+            print(f"⚠️ Cohere failed, falling back to FakeListLLM: {str(e)}")
+            return FakeListLLM(responses=["This is a fallback response."])
 
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
@@ -85,19 +84,23 @@ def load_yaml(path):
 
 # 🚀 Crew creation
 def create_crew(persona: str, user_question: str):
-    print("✅ create_crew() called with persona:", persona)
+    print(f"✅ create_crew() called with persona: {persona}")
 
+    # Load agent and task configurations from YAML files
     base_dir = os.path.dirname(__file__)
     agents_config = load_yaml(os.path.join(base_dir, 'config/agents.yaml'))
     tasks_config = load_yaml(os.path.join(base_dir, 'config/tasks.yaml'))
 
+    # Get the configuration for the selected persona
     agent_cfg = agents_config['agents'].get(persona)
     if not agent_cfg:
         raise ValueError(f"Unknown persona: {persona}")
 
+    # Get the LLM (language model) instance
     llm = get_llm()
     print("✅ LLM type:", type(llm))
 
+    # Create an agent based on persona and task configuration
     agent = Agent(
         role=agent_cfg["role"],
         goal=agent_cfg["goal"],
@@ -107,21 +110,32 @@ def create_crew(persona: str, user_question: str):
         llm=llm
     )
 
-    reaction = persona_reactions.get(persona, "")
+    # Add persona-specific reactions to the task description
+    reaction = persona_reactions.get(persona, "No reaction available.")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question
+
+    # Get the context for the task using the RAG tool
     context = rag_tool(user_question)
 
+    # Create the task based on the configuration
     task_template = tasks_config['tasks']['explainer']
     task = Task(
         name=task_template['name'],
-        description=task_template['description'].format(query=f"{task_description}\n\nRelevant Java context:\n{context}"),
+        description=task_template['description'].format(query=f"{task_description}\n\nRelevant context:\n{context}"),
         expected_output=task_template['expected_output'],
         agent=agent
     )
 
+    # Create the crew (with one agent and one task)
     crew = Crew(agents=[agent], tasks=[task], verbose=True)
+
+    # Kick off the crew and get the result
     result = crew.kickoff()
+
+    # Update the agent's level (if applicable)
     levels.update_level(persona)
 
+    # Clean the output to remove unwanted tags
     cleaned_content = re.sub(r"<think>.*?</think>\n?", "", result.tasks_output[0].raw, flags=re.DOTALL)
+
     return cleaned_content

@@ -17,78 +17,54 @@ sys.path.insert(0, base_dir)
 
 import requests
 import streamlit as st
-import time
+import json
 
-# Use your Hugging Face Access Token from Streamlit secrets
+# Retrieve the Hugging Face Access Token from Streamlit secrets
 HF_ACCESS_TOKEN = st.secrets["HUGGINGFACE_ACCESS_TOKEN"]
 
-# Hugging Face model endpoint (change this to the correct model)
-HF_API_URL = "https://api-inference.huggingface.co/models/gpt2"  # Replace with the correct model URL
-
-class FakeListLLM:
-    def __init__(self, responses):
-        self.responses = responses
-
-    def invoke(self, prompt):
-        return self.responses[0]
+# Hugging Face model endpoint (for GPT-2, you can change it to other models as needed)
+HF_API_URL = "https://api-inference.huggingface.co/models/gpt2"  # You can use other models like gpt-j or distilGPT
 
 def get_llm():
-    retries = 3
-    backoff_factor = 2
-    max_wait_time = 60  # in seconds
+    # Prepare the headers with Authorization
+    headers = {
+        "Authorization": f"Bearer {HF_ACCESS_TOKEN}",
+        "Content-Type": "application/json"  # Ensure the content type is set to JSON
+    }
 
-    for attempt in range(retries):
-        try:
-            print("🔌 Trying Hugging Face API...")
+    # Prepare the data (the prompt text to pass to the model)
+    data = {
+        "inputs": "Hello, Hugging Face! Can you help me?",  # Sample prompt for testing
+        "parameters": {
+            "max_length": 100  # Optional: Controls the maximum length of the output
+        }
+    }
 
-            headers = {
-                "Authorization": f"Bearer {HF_ACCESS_TOKEN}"  # Use Access Token instead of API Key
-            }
+    try:
+        print("🔌 Sending request to Hugging Face API...")
 
-            # Prepare the request payload
-            data = {
-                "inputs": "Hello, Hugging Face!",  # Sample prompt for testing
-                "parameters": {
-                    "max_length": 100
-                }
-            }
+        # Send POST request to the Hugging Face API
+        response = requests.post(HF_API_URL, headers=headers, json=data)
 
-            # Send the POST request to Hugging Face's hosted model
-            response = requests.post(HF_API_URL, headers=headers, json=data)
+        # Check if the response is successful
+        if response.status_code == 200:
+            print("✅ Hugging Face LLM successfully loaded!")
+            return response.json()  # Return the generated response as JSON
+        else:
+            print(f"⚠️ Error: {response.status_code} - {response.text}")
+            return None  # Return None if error occurs
+    except Exception as e:
+        print(f"⚠️ Exception occurred: {e}")
+        return None  # Return None in case of an exception
 
-            # If the request is successful
-            if response.status_code == 200:
-                print("✅ Hugging Face LLM loaded")
-                return response  # Return the response to be used later
+# Test the LLM call
+llm_response = get_llm()
 
-            # Handle rate limiting (429 error)
-            elif response.status_code == 429:
-                remaining = response.headers.get("X-RateLimit-Remaining", 0)
-                reset_time = response.headers.get("X-RateLimit-Reset", time.time())
-                wait_time = max(0, reset_time - time.time())
-                print(f"⚠️ Rate limit hit. {remaining} requests remaining. Retrying in {wait_time} seconds.")
-                time.sleep(wait_time)  # Wait before retrying
-                continue
-
-            else:
-                print(f"⚠️ Error: {response.status_code} - {response.text}")
-                return FakeListLLM(responses=["API error: Unable to fetch response from Hugging Face."])
-
-        except Exception as e:
-            print(f"⚠️ Error encountered: {str(e)}")
-            return FakeListLLM(responses=["API error: Unable to fetch response."])
-
-    # Fallback if all retries fail
-    print("⚠️ Failed after multiple attempts. Using fallback.")
-    return FakeListLLM(responses=["This is a fallback response."])
-
-# Usage example to call the LLM
-llm = get_llm()
-if isinstance(llm, requests.Response):
-    generated_text = llm.json()[0]['generated_text']  # Assuming response is in the expected format
-    print("Generated Text:", generated_text)
+if llm_response:
+    print("Generated Text:", llm_response[0]['generated_text'])
 else:
-    print("⚠️ Using fallback response.")
+    print("⚠️ Unable to generate text, using fallback.")
+
 
 
 # ✅ Build RAG tool

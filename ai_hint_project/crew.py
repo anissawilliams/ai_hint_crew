@@ -17,19 +17,24 @@ from langchain_openrouter import ChatOpenRouter
 from langchain_community.llms.fake import FakeListLLM
 import streamlit as st
 
+from langchain.chat_models import ChatOpenAI
+
 def get_llm():
     try:
-        print("🔌 Trying OpenRouter LLM...")
-        llm = ChatOpenRouter(
-            openrouter_api_key=st.secrets["OPENROUTER_API_KEY"],
-            model="mistral/mistral-7b-instruct"
+        print("🔌 Trying OpenRouter via ChatOpenAI...")
+        llm = ChatOpenAI(
+            api_key=st.secrets["OPENROUTER_API_KEY"],
+            base_url="https://openrouter.ai/api/v1",
+            model_name="mistral/mistral-7b-instruct"
         )
-        _ = llm.invoke("ping")  # force test
+        _ = llm.invoke("ping")  # test call
         print("✅ OpenRouter LLM loaded")
         return llm
     except Exception as e:
         print("⚠️ OpenRouter failed, falling back:", e)
+        from langchain_community.llms.fake import FakeListLLM
         return FakeListLLM(responses=["This is a fallback response."])
+
 
 
 

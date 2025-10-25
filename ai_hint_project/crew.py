@@ -1,82 +1,58 @@
 # crew.py
-print("✅ crew.py loaded")
-
-import streamlit as st
-import os
-import sys
-import yaml
-import re
-import json
+import os, sys, re, yaml, streamlit as st
 from crewai import Crew, Agent, Task
-from . import levels
-from ai_hint_project.tools.rag_tool import build_rag_tool
-from openai import OpenAI
 from langchain_openai import ChatOpenAI
-from langchain_community.llms.fake import FakeListLLM  # ✅ correct
+from langchain_community.llms.fake import FakeListLLM
 from langchain_groq import ChatGroq
+from ai_hint_project.tools.rag_tool import build_rag_tool
+from . import levels
 
-
-
-
+print("✅ crew.py loaded")
 
 # 🔧 Base paths
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
-# ✅ Initialize LangChain-compatible LLM
-
-api_key = st.secrets["OPENAI_API_KEY"]
-if not api_key or not api_key.startswith("sk-"):
-    raise RuntimeError("OPENAI_API_KEY is missing or malformed.")
-
-client = OpenAI(api_key=api_key) 
-
-# llm = ChatOpenAI(
-#     model="gpt-3.5-turbo",
-#     temperature=0.7,
-#     api_key=api_key
-# )
-
-# llm = ChatGroq(
-#     groq_api_key=st.secrets["GROQ_API_KEY"],
-#    model_name="llama-3.1-8b-instant"
-# )
+# 🧠 LLM loader
 def get_llm():
-    print("🧪 Using dummy LLM for testing")
-    return FakeListLLM(responses=["This is a dummy response."])
+    provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
+    try:
+        if provider == "groq":
+            return ChatGroq(
+                groq_api_key=st.secrets["GROQ_API_KEY"],
+                model_name="llama3-8b-8192"  # Update if needed
+            )
+        else:
+            return ChatOpenAI(
+                api_key=st.secrets["OPENAI_API_KEY"],
+                model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
+            )
+    except Exception as e:
+        print("⚠️ LLM load failed, using dummy:", e)
+        return FakeListLLM(responses=["This is a fallback response."])
 
-print(f"🧠 LLM provider: {st.secrets.get('LLM_PROVIDER', 'openai')}")
-
-# def get_llm():
-#     provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
-#     if provider == "groq":
-#         from langchain_groq import ChatGroq
-#         return ChatGroq(
-#             groq_api_key=st.secrets["GROQ_API_KEY"],
-#             model_name="llama-3.1-8b-instant"
-#         )
-#     else:
-#         from langchain_openai import ChatOpenAI
-#         return ChatOpenAI(
-#             api_key=st.secrets["OPENAI_API_KEY"],
-#             model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
-#         )
-
-
-print("🔑 OPENAI_API_KEY:", repr(api_key))
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")
 rag_tool, _ = build_rag_tool(
-    index_path = os.path.join(rag_folder, "baeldung_scraper"),
+    index_path=os.path.join(rag_folder, "baeldung_scraper"),
     chunks_path=os.path.join(rag_folder, "chunks.json")
 )
 
-# 🔍 Load YAML config
-def load_yaml(path):
-    with open(path, 'r') as f:
-        return yaml.safe_load(f)
+# 🎭 Persona reactions
+persona_reactions = {
+    "Batman": "Code received. Let’s patch the vulnerability.",
+    "Yoda": "Code, you have pasted. Analyze it, we must.",
+    "Spider-Gwen": "Let’s swing through this syntax.",
+    "Shuri": "Let’s scan it with Wakandan tech.",
+    "Elsa": "Let me freeze the bugs and refactor.",
+    "Wednesday Addams": "Let’s dissect it like a corpse.",
+    "Iron Man": "Let’s run diagnostics and upgrade it.",
+    "Nova": "Let’s orbit through its logic.",
+    "Zee": "Let’s treat this like a boss fight.",
+    "Sherlock Holmes": "Let’s deduce its structure."
+}
 
-# 🧠 Detect if input contains code
+# 🧠 Detect code input
 def is_code_input(text):
     code_patterns = [
         r"\bdef\b", r"\bclass\b", r"\bimport\b", r"\breturn\b",
@@ -85,31 +61,23 @@ def is_code_input(text):
     ]
     return any(re.search(pattern, text) for pattern in code_patterns)
 
-# 🎭 Persona-specific reactions
-persona_reactions = {
-    "Batman": "Code received. Looks like a breach in logic. Let’s patch the vulnerability before it spreads.",
-    "Yoda": "Code, you have pasted. Analyze it, we must. Hidden, the bug may be.",
-    "Spider-Gwen": "Nice drop! Let’s swing through this syntax and catch any bugs midair.",
-    "Shuri": "Vibranium-grade logic? Let’s scan it with Wakandan tech and optimize the flow.",
-    "Elsa": "This code is… chaotic. Let me freeze the bugs and refactor with elegance.",
-    "Wednesday Addams": "You’ve pasted code. How delightfully broken it looks. Let’s dissect it like a corpse.",
-    "Iron Man": "Code drop detected. Let’s run diagnostics and upgrade it to Stark-level performance.",
-    "Nova": "Cosmic code detected. Let’s orbit through its logic and illuminate the stars within.",
-    "Zee": "Code incoming! Let’s treat this like a boss fight and break it down tactically.",
-    "Sherlock Holmes": "Ah, a code snippet. Let’s deduce its structure and uncover any hidden flaws."
-}
+# 📦 Load YAML
+def load_yaml(path):
+    with open(path, 'r') as f:
+        return yaml.safe_load(f)
 
-# ✅ Crew creation
+# 🚀 Crew creation
 def create_crew(persona: str, user_question: str):
     print("✅ create_crew() called with persona:", persona)
 
     base_dir = os.path.dirname(__file__)
     agents_config = load_yaml(os.path.join(base_dir, 'config/agents.yaml'))
     tasks_config = load_yaml(os.path.join(base_dir, 'config/tasks.yaml'))
-    print("🔑 OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
+
     agent_cfg = agents_config['agents'].get(persona)
     if not agent_cfg:
         raise ValueError(f"Unknown persona: {persona}")
+
     llm = get_llm()
     agent = Agent(
         role=agent_cfg["role"],
@@ -122,7 +90,6 @@ def create_crew(persona: str, user_question: str):
 
     reaction = persona_reactions.get(persona, "")
     task_description = f"{reaction}\n\n{user_question}" if is_code_input(user_question) else user_question
-
     context = rag_tool(user_question)
 
     task_template = tasks_config['tasks']['explainer']
@@ -134,7 +101,6 @@ def create_crew(persona: str, user_question: str):
     )
 
     crew = Crew(agents=[agent], tasks=[task], verbose=True)
-
     result = crew.kickoff()
     levels.update_level(persona)
 

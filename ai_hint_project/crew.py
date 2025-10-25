@@ -1,9 +1,9 @@
 # crew.py
 import os, sys, re, yaml, streamlit as st
 from crewai import Crew, Agent, Task
-from langchain_openai import ChatOpenAI
+#from langchain_openai import ChatOpenAI
 from langchain_community.llms.fake import FakeListLLM
-from langchain_groq import ChatGroq
+#from langchain_groq import ChatGroq
 from ai_hint_project.tools.rag_tool import build_rag_tool
 from . import levels
 
@@ -15,21 +15,28 @@ sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
 def get_llm():
-    provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
-    try:
-        if provider == "groq":
-            return ChatGroq(
-                groq_api_key=st.secrets["GROQ_API_KEY"],
-                model_name="llama3-8b-8192"  # Update if needed
-            )
-        else:
-            return ChatOpenAI(
-                api_key=st.secrets["OPENAI_API_KEY"],
-                model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
-            )
-    except Exception as e:
-        print("⚠️ LLM load failed, using dummy:", e)
-        return FakeListLLM(responses=["This is a fallback response."])
+    print("🧪 Using dummy LLM for testing")
+    from langchain_community.llms.fake import FakeListLLM
+    return FakeListLLM(responses=["This is a fallback response."])
+
+print("✅ LLM object type:", type(llm))
+
+# def get_llm():
+#     provider = st.secrets.get("LLM_PROVIDER", "openai").lower()
+#     try:
+#         if provider == "groq":
+#             return ChatGroq(
+#                 groq_api_key=st.secrets["GROQ_API_KEY"],
+#                 model_name="llama3-8b-8192"  # Update if needed
+#             )
+#         else:
+#             return ChatOpenAI(
+#                 api_key=st.secrets["OPENAI_API_KEY"],
+#                 model=st.secrets.get("OPENAI_MODEL", "gpt-3.5-turbo")
+#             )
+#     except Exception as e:
+#         print("⚠️ LLM load failed, using dummy:", e)
+#         return FakeListLLM(responses=["This is a fallback response."])
 
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

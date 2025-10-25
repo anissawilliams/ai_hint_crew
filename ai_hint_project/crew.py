@@ -7,7 +7,7 @@ import re
 import json
 import faiss
 from crewai import Crew, Agent, Task
-from langchain.chat_models import ChatOpenAI  # ✅ Use LangChain's OpenAI wrapper
+from langchain_openai import ChatOpenAI  # ✅ Use LangChain's OpenAI wrapper
 from . import levels
 from ai_hint_project.tools.rag_tool import build_rag_tool
 
@@ -16,8 +16,9 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
 # ✅ Initialize LangChain-compatible LLM
+
 llm = ChatOpenAI(
-    model_name="gpt-4",  # or "gpt-3.5-turbo"
+    model="gpt-4",
     temperature=0.7
 )
 

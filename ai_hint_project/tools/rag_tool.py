@@ -1,5 +1,5 @@
 
-from langchain.embeddings import OpenAIEmbeddings  # or HuggingFaceEmbeddings if you prefer
+from langchain_openai import OpenAIEmbeddings  
 import json
 import streamlit as st
 

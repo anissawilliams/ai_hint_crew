@@ -12,7 +12,7 @@ from . import levels
 from ai_hint_project.tools.rag_tool import build_rag_tool
 from openai import OpenAI
 from langchain_openai import ChatOpenAI
-from langchain.llms.fake import FakeListLLM
+from langchain_community.llms.fake import FakeListLLM  # ✅ correct
 from langchain_groq import ChatGroq
 
 

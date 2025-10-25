@@ -17,12 +17,13 @@ sys.path.insert(0, base_dir)
 
 import requests
 import streamlit as st
+import time
 
-# Use your Hugging Face API key
-HF_API_KEY = st.secrets["HUGGINGFACE_ACCESS_TOKEN"]  # Ensure you add this secret in Streamlit secrets
+# Use your Hugging Face Access Token from Streamlit secrets
+HF_ACCESS_TOKEN = st.secrets["HUGGINGFACE_ACCESS_TOKEN"]
 
-# Hugging Face model endpoint
-HF_API_URL = "https://api-inference.huggingface.co/models/gpt2"  # Replace with your chosen model (e.g., gpt2, gpt-j)
+# Hugging Face model endpoint (change this to the correct model)
+HF_API_URL = "https://api-inference.huggingface.co/models/gpt2"  # Replace with the correct model URL
 
 class FakeListLLM:
     def __init__(self, responses):
@@ -41,7 +42,7 @@ def get_llm():
             print("🔌 Trying Hugging Face API...")
 
             headers = {
-                "Authorization": f"Bearer {HF_API_KEY}"
+                "Authorization": f"Bearer {HF_ACCESS_TOKEN}"  # Use Access Token instead of API Key
             }
 
             # Prepare the request payload
@@ -88,6 +89,7 @@ if isinstance(llm, requests.Response):
     print("Generated Text:", generated_text)
 else:
     print("⚠️ Using fallback response.")
+
 
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

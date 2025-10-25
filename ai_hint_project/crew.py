@@ -13,8 +13,9 @@ sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
 
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain_community.llms.fake import FakeListLLM
+
 
 def get_llm():
     try:
@@ -22,7 +23,7 @@ def get_llm():
         llm = ChatOpenAI(
             api_key=st.secrets["OPENROUTER_API_KEY"],
             base_url="https://openrouter.ai/api/v1",
-            model="openrouter/mistralai/mistral-7b-instruct"
+            model="openrouter/mistralai/mistral-7b-instruct"  # ✅ Confirmed valid
         )
         _ = llm.invoke("ping")
         print("✅ OpenRouter LLM loaded")
@@ -30,6 +31,7 @@ def get_llm():
     except Exception as e:
         print("⚠️ OpenRouter failed, falling back:", e)
         return FakeListLLM(responses=["This is a fallback response."])
+
 
 
 

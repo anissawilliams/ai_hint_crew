@@ -16,7 +16,7 @@ sys.path.insert(0, base_dir)
 # 🧠 LLM loader
 def get_llm():
     llm = ChatGroq(
-    groq_api_key=st.sectret["GROK_API_KEY"]
+    api_key = st.secrets["GROQ_API_KEY"]
     model_name="llama-3.1-8b-instant"
     )
 

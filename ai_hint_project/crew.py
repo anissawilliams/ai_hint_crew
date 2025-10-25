@@ -16,9 +16,11 @@ sys.path.insert(0, base_dir)
 # 🧠 LLM loader
 def get_llm():
     llm = ChatGroq(
-    groq_api_key = st.secrets["GROQ_API_KEY"]
-    model_name="llama-3.1-8b-instant"
+        groq_api_key=st.secrets["GROQ_API_KEY"],
+        model_name="llama-3.1-8b-instant"
     )
+    return llm
+
 
 # ✅ Build RAG tool
 rag_folder = os.path.join(base_dir, "baeldung_scraper")

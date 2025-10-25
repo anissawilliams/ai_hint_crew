@@ -5,6 +5,7 @@ sentence-transformers
 pysqlite3-binary
 langchain>=0.1.13
 langchain-community>=0.0.21
+langchain-openrouter
 chromadb>=0.4.22
 faiss-cpu
 langchain-openai

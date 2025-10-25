@@ -19,12 +19,11 @@ from langchain_community.llms.fake import FakeListLLM
 def get_llm():
     try:
         print("🔌 Trying OpenRouter via ChatOpenAI...")
-       llm = ChatOpenAI(
+        llm = ChatOpenAI(
             openai_api_key=st.secrets["OPENROUTER_API_KEY"],
             openai_api_base="https://openrouter.ai/api/v1",
             model_name="openrouter/mistral-7b"  # ✅ Valid model ID
         )
-
         _ = llm.invoke("ping")  # test call
         print("✅ OpenRouter LLM loaded")
         return llm

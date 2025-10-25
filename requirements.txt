@@ -12,4 +12,6 @@ numpy
 scikit-learn
 openai
 python-dotenv
+groq
+langchain-groq
 

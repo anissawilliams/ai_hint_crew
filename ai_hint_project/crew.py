@@ -13,7 +13,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_dir)
 
 # 🧠 LLM loader
-from langchain_openrouter import ChatOpenRouter
+
 from langchain_community.llms.fake import FakeListLLM
 import streamlit as st
 

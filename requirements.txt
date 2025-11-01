@@ -18,3 +18,4 @@ langchain-groq
 cohere
 requests
 huggingface
+plotly

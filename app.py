@@ -158,8 +158,12 @@ backgrounds = {}
 persona_options = {}
 persona_avatars = {}
 
+# Debug: Show what we're loading
+st.sidebar.write("🔍 Debug: Loading personas...")
+
 for name, data in agents.items():
     if not isinstance(data, dict):
+        st.sidebar.warning(f"⚠️ Skipping {name}: not a dict")
         continue
     
     level = data.get('level', 'beginner')
@@ -167,12 +171,18 @@ for name, data in agents.items():
         "beginner": 1,
         "intermediate": 3,
         "advanced": 5
-    }.get(level, 1)
+    }.get(level.lower() if isinstance(level, str) else level, 1)
     
     persona_by_level.setdefault(level_num, []).append(name)
-    backgrounds[name] = data.get('background', "#ffffff")
+    backgrounds[name] = data.get('background', "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
     persona_options[name] = f"{data.get('role', name)} — {data.get('goal', '')}"
     persona_avatars[name] = data.get('avatar', "🧠")
+    
+    st.sidebar.caption(f"✓ {name} (lvl {level_num}): {persona_avatars[name]}")
+
+# Show what we have
+st.sidebar.write(f"📊 Total personas loaded: {sum(len(v) for v in persona_by_level.values())}")
+st.sidebar.write(f"📊 By level: {dict(persona_by_level)}")
 
 # Load historical data
 historical_df = load_historical_ratings()
@@ -458,6 +468,11 @@ else:
     available_personas = []
     for lvl in range(1, st.session_state.level + 1):
         available_personas.extend(persona_by_level.get(lvl, []))
+    
+    # If no personas available at current level, show all
+    if not available_personas:
+        for personas_list in persona_by_level.values():
+            available_personas.extend(personas_list)
     
     if not available_personas:
         st.error("⚠️ No personas available")

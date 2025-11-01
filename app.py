@@ -517,14 +517,42 @@ else:
                 background: {selected_background};
                 background-attachment: fixed;
             }}
+            /* Ensure text is readable on all backgrounds */
+            .stMarkdown, .stText, p, span, div {{
+                text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.6);
+            }}
+            /* Make sure form elements are visible */
+            .stTextInput > div > div > input,
+            .stTextArea > div > div > textarea,
+            .stSelectbox > div > div,
+            .stSlider > div > div {{
+                background-color: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
+            }}
+            /* Ensure buttons are visible */
+            .stButton > button {{
+                background-color: rgba(255, 255, 255, 0.9) !important;
+                color: #333 !important;
+                border: 2px solid rgba(0,0,0,0.1) !important;
+            }}
+            .stButton > button[kind="primary"] {{
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                color: white !important;
+                border: none !important;
+            }}
+            /* Sidebar stays readable */
+            section[data-testid="stSidebar"] {{
+                background-color: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
+            }}
         </style>
     """, unsafe_allow_html=True)
     
     # Persona card
     st.markdown(f"""
-    <div class='persona-card' style='background: {selected_background};'>
-        <h2>{persona_avatars[selected_persona]} {selected_persona}</h2>
-        <p>{persona_options[selected_persona]}</p>
+    <div class='persona-card' style='background: {selected_background}; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.3);'>
+        <h2 style='text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.5);'>{persona_avatars[selected_persona]} {selected_persona}</h2>
+        <p style='text-shadow: 1px 1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255,255,255,0.5);'>{persona_options[selected_persona]}</p>
     </div>
     """, unsafe_allow_html=True)
     

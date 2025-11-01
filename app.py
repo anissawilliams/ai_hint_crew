@@ -136,3 +136,28 @@ if st.session_state.explanation:
     if st.button("Clear explanation"):
         st.session_state.explanation = None
         st.rerun()
+
+# Collect multiple dimensions
+st.subheader("Please rate this explanation:")
+clarity = st.slider("Clarity", 1, 5, 3)
+accuracy = st.slider("Accuracy", 1, 5, 3)
+helpfulness = st.slider("Helpfulness", 1, 5, 3)
+
+# Optional qualitative feedback
+feedback = st.text_area("Additional comments (optional):")
+
+if st.button("Submit Rating"):
+    rating_data = {
+        "timestamp": datetime.now().isoformat(),
+        "persona": selected_persona,
+        "question": user_question,
+        "clarity": clarity,
+        "accuracy": accuracy,
+        "helpfulness": helpfulness, 
+        "feedback": feedback,
+        "user_level": st.session_state.level
+    }
+    
+    # Append to JSON file
+    with open("ratings.json", "a") as f:
+        f.write(json.dumps(rating_data) + "\n")

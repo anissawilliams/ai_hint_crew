@@ -103,6 +103,27 @@ st.markdown("""
         margin: 15px 0;
         color: white;
     }
+    .code-review-box {
+        background-color: rgba(40, 40, 60, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #f5576c;
+        margin: 15px 0;
+        color: white;
+    }
+    .snippet-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        margin: 10px 0;
+    }
+    .snippet-locked {
+        opacity: 0.6;
+        filter: grayscale(80%);
+    }
     .reward-popup {
         position: fixed;
         top: 50%;
@@ -121,12 +142,391 @@ st.markdown("""
         50% { transform: translate(-50%, -50%) scale(1.05); }
         100% { transform: translate(-50%, -50%) scale(1); }
     }
-    /* Ensure text is readable on all backgrounds */
     .stApp {
         background-attachment: fixed;
     }
     </style>
 """, unsafe_allow_html=True)
+
+# Code Snippets Database
+CODE_SNIPPETS = {
+    'Nova': {
+        'name': "Nova's Cosmic Collection",
+        'icon': '🌟',
+        'snippets': [
+            {
+                'title': 'Stream Filter & Map',
+                'description': 'Transform data like constellations',
+                'code': '''List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+List<Integer> doubled = numbers.stream()
+    .filter(n -> n % 2 == 0)
+    .map(n -> n * 2)
+    .collect(Collectors.toList());''',
+                'tier': 0
+            },
+            {
+                'title': 'Lambda Function',
+                'description': 'Elegant functional orbit',
+                'code': '''Function<String, Integer> length = s -> s.length();
+int result = length.apply("Nova");''',
+                'tier': 0
+            },
+            {
+                'title': 'Optional Handling',
+                'description': 'Navigate the void safely',
+                'code': '''Optional<String> name = Optional.ofNullable(getUserName());
+String result = name.orElse("Unknown Traveler");''',
+                'tier': 25
+            },
+            {
+                'title': 'Stream Reduce',
+                'description': 'Collapse the universe into one',
+                'code': '''int sum = numbers.stream()
+    .reduce(0, (a, b) -> a + b);''',
+                'tier': 25
+            },
+            {
+                'title': 'Collectors groupingBy',
+                'description': 'Organize galaxies by type',
+                'code': '''Map<String, List<Person>> grouped = people.stream()
+    .collect(Collectors.groupingBy(Person::getType));''',
+                'tier': 50
+            },
+            {
+                'title': 'Parallel Streams',
+                'description': 'Process multiple star systems',
+                'code': '''long count = data.parallelStream()
+    .filter(d -> d.getValue() > threshold)
+    .count();''',
+                'tier': 50
+            }
+        ]
+    },
+    'Batman': {
+        'name': "Batman's Arsenal",
+        'icon': '🦇',
+        'snippets': [
+            {
+                'title': 'Try-Catch Pattern',
+                'description': 'Catch criminals (exceptions)',
+                'code': '''try {
+    riskyOperation();
+} catch (SpecificException e) {
+    logger.error("Threat detected: " + e.getMessage());
+    handleThreat(e);
+} finally {
+    cleanup();
+}''',
+                'tier': 0
+            },
+            {
+                'title': 'Debug Logger',
+                'description': 'Track evidence',
+                'code': '''private static final Logger log = LoggerFactory.getLogger(Detective.class);
+
+public void investigate() {
+    log.debug("Starting investigation...");
+    log.info("Clue found: {}", evidence);
+    log.error("Threat level: CRITICAL");
+}''',
+                'tier': 0
+            },
+            {
+                'title': 'Null Check Guard',
+                'description': 'Defensive programming',
+                'code': '''public void process(Object data) {
+    if (data == null) {
+        throw new IllegalArgumentException("Target cannot be null");
+    }
+    // Safe to proceed
+}''',
+                'tier': 25
+            },
+            {
+                'title': 'Custom Exception',
+                'description': 'Classify threats',
+                'code': '''public class ThreatException extends Exception {
+    private final ThreatLevel level;
+    
+    public ThreatException(String message, ThreatLevel level) {
+        super(message);
+        this.level = level;
+    }
+}''',
+                'tier': 50
+            }
+        ]
+    },
+    'Spider-Gwen': {
+        'name': "Spider-Gwen's Web",
+        'icon': '🕷️',
+        'snippets': [
+            {
+                'title': 'Thread Creation',
+                'description': 'Swing through parallel tasks',
+                'code': '''Thread webSwing = new Thread(() -> {
+    System.out.println("Swinging through the city!");
+});
+webSwing.start();''',
+                'tier': 0
+            },
+            {
+                'title': 'ExecutorService',
+                'description': 'Coordinate multiple swings',
+                'code': '''ExecutorService executor = Executors.newFixedThreadPool(4);
+executor.submit(() -> performTask());
+executor.shutdown();''',
+                'tier': 25
+            },
+            {
+                'title': 'CompletableFuture',
+                'description': 'Async web-slinging',
+                'code': '''CompletableFuture<String> future = CompletableFuture
+    .supplyAsync(() -> fetchData())
+    .thenApply(data -> process(data))
+    .exceptionally(ex -> handleError(ex));''',
+                'tier': 50
+            }
+        ]
+    },
+    'Shuri': {
+        'name': "Shuri's Lab",
+        'icon': '👑',
+        'snippets': [
+            {
+                'title': 'ArrayList Operations',
+                'description': 'Vibranium-grade collections',
+                'code': '''ArrayList<String> tech = new ArrayList<>();
+tech.add("Vibranium");
+tech.remove(0);
+boolean hasTech = tech.contains("Vibranium");''',
+                'tier': 0
+            },
+            {
+                'title': 'HashMap Storage',
+                'description': 'Wakandan data vault',
+                'code': '''HashMap<String, Integer> inventory = new HashMap<>();
+inventory.put("Vibranium", 100);
+int amount = inventory.getOrDefault("Vibranium", 0);''',
+                'tier': 0
+            },
+            {
+                'title': 'LinkedList Queue',
+                'description': 'Process tech upgrades in order',
+                'code': '''LinkedList<Task> queue = new LinkedList<>();
+queue.offer(new Task("Upgrade"));
+Task next = queue.poll();''',
+                'tier': 25
+            },
+            {
+                'title': 'TreeMap Sorted',
+                'description': 'Organized royal archives',
+                'code': '''TreeMap<Integer, String> sorted = new TreeMap<>();
+sorted.put(1, "First");
+sorted.put(3, "Third");
+// Automatically sorted by key''',
+                'tier': 50
+            }
+        ]
+    },
+    'Yoda': {
+        'name': "Yoda's Wisdom",
+        'icon': '🧙‍♂️',
+        'snippets': [
+            {
+                'title': 'Basic Recursion',
+                'description': 'The Force flows through calls',
+                'code': '''public int factorial(int n) {
+    if (n <= 1) return 1;  // Base case, it is
+    return n * factorial(n - 1);  // Recursive, the Force is
+}''',
+                'tier': 0
+            },
+            {
+                'title': 'Tree Traversal',
+                'description': 'Walk the Force tree',
+                'code': '''public void traverse(Node node) {
+    if (node == null) return;  // Empty, the path is
+    System.out.println(node.value);
+    traverse(node.left);   // Left, we go
+    traverse(node.right);  // Right, we go
+}''',
+                'tier': 25
+            },
+            {
+                'title': 'Fibonacci Sequence',
+                'description': 'Ancient pattern of numbers',
+                'code': '''public int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}''',
+                'tier': 50
+            }
+        ]
+    },
+    'Wednesday Addams': {
+        'name': "Wednesday's Evidence",
+        'icon': '🖤',
+        'snippets': [
+            {
+                'title': 'If-Else Logic',
+                'description': 'Dissect the truth',
+                'code': '''if (isSuspicious) {
+    investigate();
+} else if (isInnocent) {
+    dismiss();
+} else {
+    observe();
+}''',
+                'tier': 0
+            },
+            {
+                'title': 'Switch Statement',
+                'description': 'Classify evidence',
+                'code': '''switch (evidenceType) {
+    case FINGERPRINT:
+        analyzePrint();
+        break;
+    case DNA:
+        processDNA();
+        break;
+    default:
+        log("Inconclusive");
+}''',
+                'tier': 25
+            }
+        ]
+    },
+    'Iron Man': {
+        'name': "Iron Man's Garage",
+        'icon': '⚡',
+        'snippets': [
+            {
+                'title': 'Singleton Pattern',
+                'description': 'One arc reactor to rule them all',
+                'code': '''public class ArcReactor {
+    private static ArcReactor instance;
+    
+    private ArcReactor() {}
+    
+    public static ArcReactor getInstance() {
+        if (instance == null) {
+            instance = new ArcReactor();
+        }
+        return instance;
+    }
+}''',
+                'tier': 0
+            },
+            {
+                'title': 'Factory Pattern',
+                'description': 'Build suits on demand',
+                'code': '''public class SuitFactory {
+    public static Suit createSuit(String type) {
+        switch(type) {
+            case "MARK_I": return new MarkI();
+            case "MARK_II": return new MarkII();
+            default: return new BaseSuit();
+        }
+    }
+}''',
+                'tier': 25
+            },
+            {
+                'title': 'Builder Pattern',
+                'description': 'Construct complex prototypes',
+                'code': '''Suit suit = new Suit.Builder()
+    .withReactor("Arc Reactor")
+    .withWeapons("Repulsors")
+    .withColor("Red and Gold")
+    .build();''',
+                'tier': 50
+            }
+        ]
+    },
+    'Katniss Everdeen': {
+        'name': "Katniss's Survival Kit",
+        'icon': '🏹',
+        'snippets': [
+            {
+                'title': 'Array Declaration',
+                'description': 'Prepare your arrows',
+                'code': '''int[] arrows = new int[12];
+arrows[0] = 1;
+int firstArrow = arrows[0];''',
+                'tier': 0
+            },
+            {
+                'title': 'Array Iteration',
+                'description': 'Count your supplies',
+                'code': '''for (int i = 0; i < supplies.length; i++) {
+    System.out.println(supplies[i]);
+}
+// Or enhanced for loop
+for (String item : supplies) {
+    checkSupply(item);
+}''',
+                'tier': 0
+            },
+            {
+                'title': '2D Array',
+                'description': 'Map the arena',
+                'code': '''int[][] arena = new int[12][12];
+arena[0][0] = 1;  // Cornucopia position
+int position = arena[row][col];''',
+                'tier': 25
+            }
+        ]
+    },
+    'Elsa': {
+        'name': "Elsa's Crystalline Code",
+        'icon': '❄️',
+        'snippets': [
+            {
+                'title': 'Clean Method',
+                'description': 'Freeze complexity away',
+                'code': '''// Bad: Cluttered ice
+public void doEverything() { /* 100 lines */ }
+
+// Good: Crystalline clarity
+public void processData() {
+    validateInput();
+    transformData();
+    saveResults();
+}''',
+                'tier': 0
+            },
+            {
+                'title': 'Meaningful Names',
+                'description': 'Clear as ice',
+                'code': '''// Bad: Cryptic frost
+int x = 5;
+
+// Good: Crystal clear
+int maxFrozenLayersAllowed = 5;''',
+                'tier': 0
+            },
+            {
+                'title': 'Extract Method',
+                'description': 'Refactor into elegant patterns',
+                'code': '''// Before: Messy snow
+if (user != null && user.isActive() && user.hasPermission()) {
+    // do something
+}
+
+// After: Elegant ice crystal
+if (isValidActiveUser(user)) {
+    // do something
+}
+
+private boolean isValidActiveUser(User user) {
+    return user != null && user.isActive() && user.hasPermission();
+}''',
+                'tier': 25
+            }
+        ]
+    }
+}
 
 # Load YAML
 def load_yaml(path):
@@ -214,6 +614,18 @@ def get_level_tier(level):
     else:
         return {'name': 'Advanced', 'color': '#667eea', 'icon': '🚀'}
 
+def get_affinity_tier(affinity):
+    if affinity >= 100:
+        return 'Platinum', 4
+    elif affinity >= 75:
+        return 'Gold', 3
+    elif affinity >= 50:
+        return 'Silver', 2
+    elif affinity >= 25:
+        return 'Bronze', 1
+    else:
+        return 'None', 0
+
 def add_xp(amount):
     """Add XP and check for level up"""
     progress = st.session_state.user_progress
@@ -262,7 +674,21 @@ def add_affinity(persona_name, amount):
     if 'affinity' not in progress:
         progress['affinity'] = {}
     
-    progress['affinity'][persona_name] = progress['affinity'].get(persona_name, 0) + amount
+    old_affinity = progress['affinity'].get(persona_name, 0)
+    new_affinity = old_affinity + amount
+    progress['affinity'][persona_name] = new_affinity
+    
+    # Check for tier upgrade
+    old_tier, _ = get_affinity_tier(old_affinity)
+    new_tier, _ = get_affinity_tier(new_affinity)
+    
+    if new_tier != old_tier and new_tier != 'None':
+        st.session_state.show_reward = {
+            'type': 'affinity',
+            'persona': persona_name,
+            'tier': new_tier
+        }
+    
     save_user_progress(progress)
     st.session_state.user_progress = progress
 
@@ -273,16 +699,22 @@ def init_session_state():
     
     if 'explanation' not in st.session_state:
         st.session_state.explanation = None
+    if 'code_review' not in st.session_state:
+        st.session_state.code_review = None
     if 'current_question' not in st.session_state:
         st.session_state.current_question = ""
     if 'current_persona' not in st.session_state:
         st.session_state.current_persona = None
     if 'show_analytics' not in st.session_state:
         st.session_state.show_analytics = False
+    if 'show_snippets' not in st.session_state:
+        st.session_state.show_snippets = False
     if 'show_rating' not in st.session_state:
         st.session_state.show_rating = False
     if 'show_reward' not in st.session_state:
         st.session_state.show_reward = None
+    if 'active_mode' not in st.session_state:
+        st.session_state.active_mode = 'question'  # 'question' or 'code_review'
 
 init_session_state()
 
@@ -327,14 +759,11 @@ for name, data in agents.items():
     
     persona_by_level.setdefault(level_tier, []).append(name)
     
-    # Make backgrounds TRANSPARENT (rgba with 0.85 opacity)
+    # Make backgrounds TRANSPARENT
     bg = data.get('background', "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
     if 'rgb(' in bg:
         bg = bg.replace('rgb(', 'rgba(').replace(')', ', 0.85)')
     elif '#' in bg and 'gradient' in bg:
-        # Convert hex gradients to rgba
-        bg = bg.replace('linear-gradient', 'linear-gradient')
-        # Add transparency overlay
         bg = f"linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), {bg}"
     
     backgrounds[name] = bg
@@ -391,6 +820,21 @@ if st.session_state.show_reward:
         if st.button("Keep Going!", key="close_streak"):
             st.session_state.show_reward = None
             st.rerun()
+    
+    elif reward['type'] == 'affinity':
+        st.markdown(f"""
+        <div class='reward-popup'>
+            <div style='font-size: 80px;'>⭐</div>
+            <h1 style='color: white; margin: 20px 0;'>Affinity Upgrade!</h1>
+            <h2 style='color: white;'>{reward['tier']} Tier with {reward['persona']}!</h2>
+            <p style='color: white; margin-top: 20px;'>New code snippets unlocked!</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("Check Library!", key="close_affinity"):
+            st.session_state.show_reward = None
+            st.session_state.show_snippets = True
+            st.rerun()
 
 # ==========================
 # HEADER WITH XP BAR
@@ -443,11 +887,19 @@ with st.sidebar:
     
     st.divider()
     
-    # Analytics toggle
+    # Navigation buttons
     if st.button("📊 Analytics Dashboard", 
                  type="primary" if st.session_state.show_analytics else "secondary",
                  use_container_width=True):
         st.session_state.show_analytics = not st.session_state.show_analytics
+        st.session_state.show_snippets = False
+        st.rerun()
+    
+    if st.button("💾 Code Snippets Library", 
+                 type="primary" if st.session_state.show_snippets else "secondary",
+                 use_container_width=True):
+        st.session_state.show_snippets = not st.session_state.show_snippets
+        st.session_state.show_analytics = False
         st.rerun()
     
     st.divider()
@@ -480,8 +932,49 @@ with st.sidebar:
 # MAIN CONTENT
 # ==========================
 
-if st.session_state.show_analytics:
-    # [Keep existing analytics dashboard code - it's already good]
+if st.session_state.show_snippets:
+    # ==========================
+    # CODE SNIPPETS LIBRARY
+    # ==========================
+    st.header("💾 Code Snippets Library")
+    st.markdown("Unlock code snippets by building affinity with your tutors!")
+    
+    available_personas = [p for p, lvl in persona_unlock_levels.items() if lvl <= user_level]
+    
+    for persona_name in available_personas:
+        if persona_name not in CODE_SNIPPETS:
+            continue
+        
+        persona_data = CODE_SNIPPETS[persona_name]
+        affinity = user_affinity.get(persona_name, 0)
+        tier_name, tier_level = get_affinity_tier(affinity)
+        
+        with st.expander(f"{persona_data['icon']} {persona_data['name']} - {tier_name} Tier ({affinity} affinity)", expanded=False):
+            st.progress(min(affinity / 100, 1.0))
+            
+            if affinity == 0:
+                st.info(f"💡 Ask questions with {persona_name} to unlock their snippets!")
+            
+            for snippet in persona_data['snippets']:
+                is_unlocked = affinity >= snippet['tier']
+                
+                if is_unlocked:
+                    st.markdown(f"### ✅ {snippet['title']}")
+                    st.caption(snippet['description'])
+                    st.code(snippet['code'], language='java')
+                else:
+                    st.markdown(f"""
+                    <div class='snippet-card snippet-locked'>
+                        <h4>🔒 {snippet['title']}</h4>
+                        <p>{snippet['description']}</p>
+                        <small>Unlock at {snippet['tier']} affinity</small>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+elif st.session_state.show_analytics:
+    # ==========================
+    # ANALYTICS DASHBOARD
+    # ==========================
     st.header("📊 Analytics Dashboard")
     
     if not historical_df.empty:
@@ -504,8 +997,6 @@ if st.session_state.show_analytics:
             if 'helpfulness' in historical_df.columns:
                 avg_help = historical_df['helpfulness'].mean()
                 st.metric("💡 Helpfulness", f"{avg_help:.2f}⭐")
-        
-        # Add more analytics as needed...
     else:
         st.info("📊 No ratings data yet. Start asking questions!")
 
@@ -536,7 +1027,7 @@ else:
                 unlock_level = persona_unlock_levels[persona_name]
                 is_unlocked = unlock_level <= user_level
                 affinity = user_affinity.get(persona_name, 0)
-                affinity_stars = min(5, affinity // 25)
+                affinity_stars = min(5, affinity // 20)
                 
                 with col:
                     if is_unlocked:
@@ -555,7 +1046,7 @@ else:
                             <div style='text-align: center;'>
                                 <small>{'⭐' * affinity_stars}{'☆' * (5 - affinity_stars)}</small>
                                 <div class='affinity-bar'>
-                                    <div class='affinity-fill' style='width: {(affinity % 25) * 4}%;'></div>
+                                    <div class='affinity-fill' style='width: {min(affinity, 100)}%;'></div>
                                 </div>
                             </div>
                             """, unsafe_allow_html=True)
@@ -593,110 +1084,184 @@ else:
         </div>
         """, unsafe_allow_html=True)
         
-        # Question input
-        st.subheader("💬 Ask Your Java Question")
-        user_question = st.text_area(
-            "Enter your programming question:",
-            height=150,
-            placeholder="e.g., How do I implement a LinkedList in Java?",
-            key="question_input"
-        )
-        
-        col1, col2 = st.columns([3, 1])
-        
+        # Mode selection
+        col1, col2 = st.columns(2)
         with col1:
-            ask_button = st.button("🚀 Get Explanation (+10 XP)", type="primary", use_container_width=True)
-        
+            if st.button("💬 Ask Question", 
+                        type="primary" if st.session_state.active_mode == 'question' else "secondary",
+                        use_container_width=True):
+                st.session_state.active_mode = 'question'
+                st.rerun()
         with col2:
-            if st.session_state.explanation:
-                if st.button("🗑️ Clear", use_container_width=True):
-                    st.session_state.explanation = None
-                    st.session_state.show_rating = False
-                    st.rerun()
+            if st.button("📝 Code Review (+15 XP)", 
+                        type="primary" if st.session_state.active_mode == 'code_review' else "secondary",
+                        use_container_width=True):
+                st.session_state.active_mode = 'code_review'
+                st.rerun()
         
-        # Process question
-        if ask_button:
-            if not user_question.strip():
-                st.warning("⚠️ Please enter a question first!")
-            else:
-                try:
-                    with st.spinner(f"{persona_avatars[selected_persona]} Thinking..."):
-                        result = create_crew(selected_persona, user_question)
-                    
-                    # Save explanation
-                    st.session_state.explanation = result
-                    st.session_state.current_question = user_question
-                    st.session_state.show_rating = True
-                    
-                    # Award XP and affinity
-                    add_xp(10)
-                    add_affinity(selected_persona, 10)
-                    
-                    st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
-                    with st.expander("Show detailed error"):
-                        st.code(traceback.format_exc())
+        st.divider()
         
-        # Display explanation
-        if st.session_state.explanation:
-            st.divider()
-            st.markdown("### 🗣️ Explanation")
-            st.markdown(f"""
-            <div class='explanation-box'>
-                {st.session_state.explanation}
-            </div>
-            """, unsafe_allow_html=True)
+        # ==========================
+        # CODE REVIEW MODE
+        # ==========================
+        if st.session_state.active_mode == 'code_review':
+            st.subheader("📝 Code Review")
+            st.caption(f"{persona_avatars[selected_persona]} {selected_persona} will review your Java code")
             
-            # Rating section
-            if st.session_state.show_rating:
-                st.divider()
-                st.subheader("⭐ Rate This Explanation (+5 XP)")
-                
-                with st.form("rating_form"):
-                    col1, col2, col3 = st.columns(3)
-                    
-                    with col1:
-                        clarity = st.slider("🔍 Clarity", 1, 5, 3)
-                    with col2:
-                        accuracy = st.slider("✅ Accuracy", 1, 5, 3)
-                    with col3:
-                        helpfulness = st.slider("💡 Helpfulness", 1, 5, 3)
-                    
-                    feedback = st.text_area("Additional comments (optional):", height=80)
-                    
-                    submit_rating = st.form_submit_button("📊 Submit Rating", type="primary", use_container_width=True)
-                    
-                    if submit_rating:
-                        rating_data = {
-                            'timestamp': datetime.now().isoformat(),
-                            'persona': selected_persona,
-                            'question': st.session_state.current_question[:200],
-                            'user_level': user_level,
-                            'clarity': clarity,
-                            'accuracy': accuracy,
-                            'helpfulness': helpfulness,
-                            'feedback': feedback
-                        }
+            user_code = st.text_area(
+                "Paste your Java code here:",
+                height=250,
+                placeholder="""public class Example {
+    public static void main(String[] args) {
+        // Your code here
+    }
+}""",
+                key="code_input"
+            )
+            
+            if st.button("🔍 Get Code Review (+15 XP)", type="primary", use_container_width=True):
+                if not user_code.strip():
+                    st.warning("⚠️ Please paste some code first!")
+                else:
+                    try:
+                        with st.spinner(f"{persona_avatars[selected_persona]} Analyzing your code..."):
+                            # In real version, this would call create_crew with code review prompt
+                            review_prompt = f"Review this Java code and provide feedback:\n\n{user_code}"
+                            result = create_crew(selected_persona, review_prompt)
                         
-                        if save_rating(rating_data):
-                            st.success("✅ Rating submitted! +5 XP!")
+                        st.session_state.code_review = result
+                        
+                        # Award XP and affinity
+                        add_xp(15)
+                        add_affinity(selected_persona, 15)
+                        
+                        st.success("✅ Code review complete! +15 XP, +15 Affinity")
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+            
+            # Display code review
+            if st.session_state.code_review:
+                st.divider()
+                st.markdown("### 🔍 Code Review Results")
+                st.markdown(f"""
+                <div class='code-review-box'>
+                    {st.session_state.code_review}
+                </div>
+                """, unsafe_allow_html=True)
+                
+                if st.button("🗑️ Clear Review", use_container_width=True):
+                    st.session_state.code_review = None
+                    st.rerun()
+        
+        # ==========================
+        # QUESTION MODE
+        # ==========================
+        else:
+            st.subheader("💬 Ask Your Java Question")
+            user_question = st.text_area(
+                "Enter your programming question:",
+                height=150,
+                placeholder="e.g., How do I implement a LinkedList in Java?",
+                key="question_input"
+            )
+            
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                ask_button = st.button("🚀 Get Explanation (+10 XP)", type="primary", use_container_width=True)
+            
+            with col2:
+                if st.session_state.explanation:
+                    if st.button("🗑️ Clear", use_container_width=True):
+                        st.session_state.explanation = None
+                        st.session_state.show_rating = False
+                        st.rerun()
+            
+            # Process question
+            if ask_button:
+                if not user_question.strip():
+                    st.warning("⚠️ Please enter a question first!")
+                else:
+                    try:
+                        with st.spinner(f"{persona_avatars[selected_persona]} Thinking..."):
+                            result = create_crew(selected_persona, user_question)
+                        
+                        # Save explanation
+                        st.session_state.explanation = result
+                        st.session_state.current_question = user_question
+                        st.session_state.show_rating = True
+                        
+                        # Award XP and affinity
+                        add_xp(10)
+                        add_affinity(selected_persona, 10)
+                        
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+                        with st.expander("Show detailed error"):
+                            st.code(traceback.format_exc())
+            
+            # Display explanation
+            if st.session_state.explanation:
+                st.divider()
+                st.markdown("### 🗣️ Explanation")
+                st.markdown(f"""
+                <div class='explanation-box'>
+                    {st.session_state.explanation}
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Rating section
+                if st.session_state.show_rating:
+                    st.divider()
+                    st.subheader("⭐ Rate This Explanation (+5 XP)")
+                    
+                    with st.form("rating_form"):
+                        col1, col2, col3 = st.columns(3)
+                        
+                        with col1:
+                            clarity = st.slider("🔍 Clarity", 1, 5, 3)
+                        with col2:
+                            accuracy = st.slider("✅ Accuracy", 1, 5, 3)
+                        with col3:
+                            helpfulness = st.slider("💡 Helpfulness", 1, 5, 3)
+                        
+                        feedback = st.text_area("Additional comments (optional):", height=80)
+                        
+                        submit_rating = st.form_submit_button("📊 Submit Rating", type="primary", use_container_width=True)
+                        
+                        if submit_rating:
+                            rating_data = {
+                                'timestamp': datetime.now().isoformat(),
+                                'persona': selected_persona,
+                                'question': st.session_state.current_question[:200],
+                                'user_level': user_level,
+                                'clarity': clarity,
+                                'accuracy': accuracy,
+                                'helpfulness': helpfulness,
+                                'feedback': feedback
+                            }
                             
-                            # Award XP
-                            add_xp(5)
-                            
-                            # Bonus affinity for high ratings
-                            avg_rating = (clarity + accuracy + helpfulness) / 3
-                            if avg_rating >= 4:
-                                add_affinity(selected_persona, 5)
-                                st.success(f"🌟 High rating! +5 affinity with {selected_persona}")
-                            
-                            st.session_state.show_rating = False
-                            load_historical_ratings.clear()
-                            st.rerun()
-                        else:
-                            st.error("❌ Failed to save rating.")
+                            if save_rating(rating_data):
+                                st.success("✅ Rating submitted! +5 XP!")
+                                
+                                # Award XP
+                                add_xp(5)
+                                
+                                # Bonus affinity for high ratings
+                                avg_rating = (clarity + accuracy + helpfulness) / 3
+                                if avg_rating >= 4:
+                                    add_affinity(selected_persona, 5)
+                                    st.success(f"🌟 High rating! +5 affinity with {selected_persona}")
+                                
+                                st.session_state.show_rating = False
+                                load_historical_ratings.clear()
+                                st.rerun()
+                            else:
+                                st.error("❌ Failed to save rating.")
     
     else:
         st.info("👆 Select a tutor to get started!")
